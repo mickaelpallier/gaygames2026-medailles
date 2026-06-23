@@ -7,6 +7,8 @@
     <title>Équipe Montréal - Gay Games Valencia 2026</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
     <style>
         @keyframes subtle-flow {
             0% {
@@ -594,6 +596,28 @@
         </div>
     </div>
 
+    <!-- Modale de recadrage 16:9 -->
+    <div id="crop-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-slate-950/85 backdrop-blur-sm px-4 py-6">
+        <div class="bg-white rounded-2xl shadow-2xl w-full border border-slate-100 overflow-hidden" style="max-width:820px">
+            <div class="p-4 border-b border-slate-100 flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">✂️ Recadrer la photo (format 16:9)</h3>
+                    <p class="text-sm text-slate-500 mt-0.5">Déplacez et zoomez pour choisir la zone à conserver. Le cadre est verrouillé en 16:9.</p>
+                </div>
+            </div>
+            <div class="bg-slate-950" style="height:55vh;">
+                <img id="crop-image" src="" style="display:block;max-width:100%">
+            </div>
+            <div class="p-4 flex gap-3 justify-end border-t border-slate-100 bg-slate-50">
+                <button type="button" id="crop-cancel-btn" class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Annuler</button>
+                <button type="button" id="crop-confirm-btn" class="px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition flex items-center gap-2">✂️ Confirmer le recadrage</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cropper.js (chargé avant le module principal) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
     <!-- SDK Firebase et Script Applicatif Principal -->
     <script type="module">
         // Import des bibliothèques Firebase officielles via CDN
@@ -961,6 +985,81 @@
             });
         }
 
+        // --- RECADRAGE D'IMAGE 16:9 (CROPPER.JS) ---
+        let cropperInstance = null;
+        let cropResolve = null;
+        let pendingCropDataUrl = null;
+        let pendingEditCropDataUrl = null;
+
+        function openCropModal(file) {
+            return new Promise((resolve) => {
+                cropResolve = resolve;
+                const img = document.getElementById('crop-image');
+                if (img.src && img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+                    cropperInstance = new Cropper(img, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 1,
+                        autoCropArea: 0.95,
+                        responsive: true,
+                        guides: true,
+                        center: true,
+                        movable: true,
+                        zoomable: true,
+                        rotatable: false,
+                        scalable: false,
+                    });
+                };
+                document.getElementById('crop-modal').classList.remove('hidden');
+            });
+        }
+
+        function closeCropModal() {
+            document.getElementById('crop-modal').classList.add('hidden');
+            if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+            const img = document.getElementById('crop-image');
+            if (img.src && img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+            img.src = '';
+        }
+
+        document.getElementById('crop-confirm-btn').addEventListener('click', () => {
+            if (!cropperInstance) return;
+            const canvas = cropperInstance.getCroppedCanvas({ width: 1920, height: 1080, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            closeCropModal();
+            if (cropResolve) { cropResolve(dataUrl); cropResolve = null; }
+        });
+
+        document.getElementById('crop-cancel-btn').addEventListener('click', () => {
+            closeCropModal();
+            if (cropResolve) { cropResolve(null); cropResolve = null; }
+        });
+
+        document.getElementById('form-photo').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) { pendingCropDataUrl = null; return; }
+            pendingCropDataUrl = await openCropModal(file);
+            if (!pendingCropDataUrl) e.target.value = '';
+        });
+
+        document.getElementById('edit-form-photo').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) { pendingEditCropDataUrl = null; return; }
+            pendingEditCropDataUrl = await openCropModal(file);
+            if (!pendingEditCropDataUrl) e.target.value = '';
+        });
+
+        function dataUrlToBlob(dataUrl) {
+            const [header, data] = dataUrl.split(',');
+            const mime = header.match(/:(.*?);/)[1];
+            const bytes = atob(data);
+            const arr = new Uint8Array(bytes.length);
+            for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+            return new Blob([arr], { type: mime });
+        }
+
         async function deleteMedal(id) {
             const medalObj = medalsData.find(item => item.id === id);
             const medalName = medalObj ? (medalObj.isTeam ? medalObj.teamName : medalObj.athleteName) : "ce résultat";
@@ -983,11 +1082,8 @@
         document.getElementById('add-medal-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const fileInput = document.getElementById('form-photo');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                showToast("Veuillez sélectionner une photo pour l'athlète ou l'équipe.", "⚠️");
+            if (!pendingCropDataUrl) {
+                showToast("Veuillez sélectionner et recadrer une photo.", "⚠️");
                 return;
             }
 
@@ -997,27 +1093,23 @@
             showToast("Téléchargement et enregistrement en cours...", "🔄");
 
             try {
-                let photoUrl = "";
+                let photoUrl = '';
 
-                // Tentative de stockage Cloud Storage (si actif)
+                // Tentative d'envoi vers Cloud Storage avec l'image recadrée
                 if (useFirebase && storage) {
                     try {
-                        const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}_${file.name}`);
-                        const snapshot = await uploadBytes(storageRef, file);
+                        const blob = dataUrlToBlob(pendingCropDataUrl);
+                        const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}.jpg`);
+                        const snapshot = await uploadBytes(storageRef, blob);
                         photoUrl = await getDownloadURL(snapshot.ref);
                     } catch (storageErr) {
-                        console.warn("Storage upload failed, falling back to base64 inline encoding", storageErr);
+                        console.warn("Storage upload failed, using base64", storageErr);
                     }
                 }
 
-                // Fallback ou stockage local : Conversion Base64
+                // Fallback : base64 de l'image recadrée (déjà 1920×1080 JPEG)
                 if (!photoUrl) {
-                    photoUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (event) => resolve(event.target.result);
-                        reader.onerror = (err) => reject(err);
-                        reader.readAsDataURL(file);
-                    });
+                    photoUrl = pendingCropDataUrl;
                 }
 
                 const newMedal = {
@@ -1048,6 +1140,7 @@
 
                 // Réinitialiser le formulaire
                 document.getElementById('add-medal-form').reset();
+                pendingCropDataUrl = null;
                 toggleFormSportType();
 
                 showToast("Félicitations ! Le résultat a été enregistré avec succès.", "🏆");
@@ -1430,7 +1523,7 @@
                             </span>
                             <div>
                                 <h3 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r ${gradientColors} bg-clip-text text-transparent uppercase">
-                                    Médaille d'${item.medal === 'Or' ? 'Or' : item.medal === 'Argent' ? 'Argent' : 'Bronze'}
+                                    Médaille ${item.medal === 'Or' ? 'd\'Or' : item.medal === 'Argent' ? 'd\'Argent' : 'de Bronze'}
                                 </h3>
                                 <p class="text-xs text-slate-400 tracking-wider uppercase font-bold">VALENCIA 2026 • ${formatDateToFrench(item.date)}</p>
                             </div>
@@ -1586,23 +1679,19 @@
                 const fileInput = document.getElementById('edit-form-photo');
                 const file = fileInput.files[0];
 
-                if (file) {
+                if (pendingEditCropDataUrl) {
                     let uploaded = false;
                     if (useFirebase && storage) {
                         try {
-                            const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}_${file.name}`);
-                            const snapshot = await uploadBytes(storageRef, file);
+                            const blob = dataUrlToBlob(pendingEditCropDataUrl);
+                            const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}.jpg`);
+                            const snapshot = await uploadBytes(storageRef, blob);
                             photoUrl = await getDownloadURL(snapshot.ref);
                             uploaded = true;
                         } catch (storageErr) { console.warn("Storage upload failed, using base64", storageErr); }
                     }
                     if (!uploaded) {
-                        photoUrl = await new Promise((resolve, reject) => {
-                            const reader = new FileReader();
-                            reader.onload = ev => resolve(ev.target.result);
-                            reader.onerror = reject;
-                            reader.readAsDataURL(file);
-                        });
+                        photoUrl = pendingEditCropDataUrl;
                     }
                 }
 
@@ -1632,6 +1721,7 @@
                     renderPublicList();
                 }
 
+                pendingEditCropDataUrl = null;
                 closeEditModal();
                 showToast("Résultat mis à jour avec succès.", "✅");
             } catch (err) {
