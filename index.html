@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Équipe Montréal - Gay Games Valencia 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes subtle-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body {
+            background: linear-gradient(-45deg, #f8fafc, #f1f5f9, #fafaf9, #f8fafc);
+            background-size: 400% 400%;
+            animation: subtle-flow 12s ease infinite;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Cartes médailles avec bordures élégantes */
+        .medal-card-or {
+            border-top: 5px solid #eab308;
+            box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.15);
+        }
+        .medal-card-argent {
+            border-top: 5px solid #94a3b8;
+            box-shadow: 0 10px 30px -10px rgba(148, 163, 184, 0.15);
+        }
+        .medal-card-bronze {
+            border-top: 5px solid #ca8a04;
+            box-shadow: 0 10px 30px -10px rgba(202, 138, 4, 0.15);
+        }
+
+        /* Mode TV optimisé et plein écran style Netflix */
+        .tv-mode-active #navbar { display: none; }
+        .tv-mode-active body { background: #070b12; overflow: hidden; }
+
+        .slide {
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: none;
+            height: 100%; /* S'assure que la slide prend toute la hauteur */
+        }
+        .slide.active {
+            opacity: 1;
+            display: flex;
+        }
+
+        /* Dégradé de fusion Netflix sur la photo */
+        .tv-photo-mask {
+            background: linear-gradient(to right, #070b12 0%, #070b12 20%, rgba(7, 11, 18, 0.4) 50%, rgba(7, 11, 18, 0) 100%);
+        }
+
+        @media (max-width: 1023px) {
+            .tv-photo-mask {
+                background: linear-gradient(to top, #070b12 0%, #070b12 40%, rgba(7, 11, 18, 0.7) 70%, rgba(7, 11, 18, 0) 100%);
+            }
+        }
+
+        /* Scrollbars élégantes */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- BARRE DE NAVIGATION -->
+    <nav id="navbar" class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logos -->
+                <div class="flex items-center space-x-4">
+                    <img src="H1.png" alt="Gay Games Valencia 2026" class="h-12 object-contain hover:scale-105 transition" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Gay+Games+2026'">
+                    <span class="text-3xl font-extralight text-slate-200">|</span>
+                    <img src="logo-horizontal-couleur-sanstexte@8x.png" alt="Équipe Montréal" class="h-12 object-contain hover:scale-105 transition" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Equipe+Montreal'">
+                </div>
+                
+                <!-- Boutons d'action rapides -->
+                <div class="flex space-x-2 sm:space-x-3">
+                    <button onclick="showView('public-list')" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm sm:text-base transition flex items-center gap-2">
+                        📋 <span class="hidden sm:inline">Liste</span>
+                    </button>
+                    <button onclick="startTVMode()" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm sm:text-base transition flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                        📺 <span>Mode TV</span>
+                    </button>
+                    <button onclick="showAdminLogin()" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-semibold text-sm sm:text-base transition flex items-center gap-2">
+                        ⚙️ <span class="hidden sm:inline">Admin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- VUE 1 : GRILLE PUBLIQUE (STYLE ÉLÉGANT) -->
+    <main id="view-public-list" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <!-- En-tête de la page -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full text-indigo-700 font-semibold text-sm mb-4">
+                ✨ Valence 2026
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-3">
+                Tableau d'Honneur d'Équipe Montréal
+            </h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto">
+                Célébrons ensemble les performances et les médailles remportées par nos athlètes à Valence !
+            </p>
+        </div>
+
+        <!-- Filtres rapides -->
+        <div class="flex flex-wrap justify-center gap-3 mb-10">
+            <button onclick="filterMedals('Tous')" class="filter-btn px-4 py-2 rounded-full bg-slate-900 text-white font-medium transition text-sm">Tous</button>
+            <button onclick="filterMedals('Or')" class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥇 Or</button>
+            <button onclick="filterMedals('Argent')" class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥈 Argent</button>
+            <button onclick="filterMedals('Bronze')" class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥉 Bronze</button>
+        </div>
+
+        <!-- Grille des Médaillés -->
+        <div id="medals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Rempli par JavaScript -->
+        </div>
+    </main>
+
+    <!-- VUE 2 : DIAPORAMA TV (STYLE CINÉMATIQUE / NETFLIX) -->
+    <main id="view-tv" class="hidden fixed inset-0 z-50 bg-[#070b12] flex flex-col justify-between">
+        <!-- Bandeau supérieur discret -->
+        <div class="p-6 flex justify-between items-center border-b border-slate-800/40 bg-slate-950/80 backdrop-blur-md z-30">
+            <div class="flex items-center space-x-4">
+                <img src="logo-horizontal-couleur-sanstexte@8x.png" alt="Équipe Montréal" class="h-10 object-contain brightness-110" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Equipe+Montreal'">
+                <span class="text-slate-600 font-light text-xl">|</span>
+                <span class="text-indigo-400 font-bold tracking-wider text-sm uppercase">Gay Games Valence 2026</span>
+            </div>
+            <button onclick="stopTVMode()" class="px-5 py-2 bg-slate-850 hover:bg-slate-800 border border-slate-800 text-white rounded-full transition flex items-center gap-2 text-sm font-semibold shadow-lg">
+                <span>❌</span> Quitter la TV
+            </button>
+        </div>
+
+        <!-- Conteneur central dynamique du diaporama -->
+        <div id="slideshow-container" class="relative flex-grow w-full h-full overflow-hidden">
+            <!-- Injecté dynamiquement par JS -->
+        </div>
+
+        <!-- Pied de page avec barre de progression de la diapositive -->
+        <div class="h-1.5 w-full bg-slate-950/80 z-30">
+            <div id="slide-progress" class="h-full bg-indigo-500 transition-all duration-7500 ease-linear" style="width: 0%"></div>
+        </div>
+    </main>
+
+    <!-- VUE 3 : CONNEXION ADMIN -->
+    <main id="view-admin-login" class="hidden flex-grow flex items-center justify-center px-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-100">
+            <div class="text-center mb-6">
+                <span class="text-4xl">🔐</span>
+                <h2 class="text-2xl font-bold text-slate-900 mt-2">Zone d'administration</h2>
+                <p class="text-slate-400 text-sm mt-1">Saisissez le mot de passe pour gérer les médailles</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="admin-pwd" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Mot de passe">
+                <button onclick="checkPassword()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20">
+                    Se connecter
+                </button>
+                <button onclick="showView('public-list')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition">
+                    Retour à l'accueil
+                </button>
+                <p id="login-error" class="text-red-500 text-sm text-center font-medium hidden">⚠️ Mot de passe incorrect</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- VUE 4 : TABLEAU DE BORD D'ADMINISTRATION (ORGANISÉ EN ONGLETS) -->
+    <main id="view-admin-dashboard" class="hidden flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <!-- Entête -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-slate-100 pb-6">
+            <div>
+                <h2 class="text-3xl font-extrabold text-slate-900">Console d'Administration</h2>
+                <p class="text-slate-500">Ajoutez les exploits d'athlètes et gérez les configurations</p>
+            </div>
+            <button onclick="logoutAdmin()" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-xl transition">
+                Déconnexion 🚪
+            </button>
+        </div>
+
+        <!-- Onglets de Navigation Admin -->
+        <div class="flex border-b border-slate-200 mb-8 space-x-1 overflow-x-auto">
+            <button id="tab-btn-form" onclick="switchAdminTab('form')" class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white">
+                🏅 Saisir un Nouveau Résultat
+            </button>
+            <button id="tab-btn-results" onclick="switchAdminTab('results')" class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800">
+                📋 Résultats Enregistrés
+            </button>
+            <button id="tab-btn-configs" onclick="switchAdminTab('configs')" class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800">
+                ⚙️ Configurations (Sports/Genres)
+            </button>
+        </div>
+
+        <!-- CONTENU DES ONGLETS -->
+        <div class="space-y-8">
+            
+            <!-- ONGLET 1: FORMULAIRE DE SAISIE (ACTIF PAR DÉFAUT) -->
+            <div id="admin-tab-form" class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-sm max-w-4xl mx-auto">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    🏅 Nouveau Résultat d'Athlète
+                </h3>
+                <form id="add-medal-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Date de l'événement -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Date</label>
+                            <input type="date" id="form-date" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <!-- Niveau de la Médaille -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Médaille</label>
+                            <select id="form-medal" class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                                <option value="Or">🥇 Or</option>
+                                <option value="Argent">🥈 Argent</option>
+                                <option value="Bronze">🥉 Bronze</option>
+                            </select>
+                        </div>
+
+                        <!-- Sport (Dynamique) -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sport</label>
+                            <select id="form-sport" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                                <!-- Options chargées depuis localStorage -->
+                            </select>
+                        </div>
+
+                        <!-- Sexe / Genre (Dynamique) -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sexe / Genre</label>
+                            <select id="form-gender" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                                <!-- Options chargées depuis localStorage -->
+                            </select>
+                        </div>
+
+                        <!-- Catégorie -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Catégorie</label>
+                            <input type="text" id="form-category" placeholder="Ex: Simple, Double, Tournoi A..." required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <!-- Sous-Catégorie -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sous-Catégorie</label>
+                            <input type="text" id="form-subcategory" placeholder="Ex: Elite, Division B, 100m Papillon..." required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <!-- Groupe d'âge -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Groupe d'âge</label>
+                            <input type="text" id="form-age-group" placeholder="Ex: Tous âges, 18-29, 30+, 40-49..." required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <!-- Type de sport (Individuel vs Équipe) -->
+                        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100 flex gap-6 items-center">
+                            <span class="text-sm font-semibold text-slate-600">Type d'engagement :</span>
+                            <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="form-sport-type" value="individual" checked onchange="toggleFormSportType()" class="text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-slate-700 font-medium">Individuel</span>
+                            </label>
+                            <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="form-sport-type" value="team" onchange="toggleFormSportType()" class="text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-slate-700 font-medium">Équipe / Collectif</span>
+                            </label>
+                        </div>
+
+                        <!-- CHAMPS CONDITIONNELS (INDIVIDUEL) -->
+                        <div id="wrapper-individual" class="md:col-span-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom Complet de l'Athlète</label>
+                            <input type="text" id="form-athlete-name" placeholder="Ex: Sarah Tremblay" class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <!-- CHAMPS CONDITIONNELS (ÉQUIPE) -->
+                        <div id="wrapper-team" class="hidden md:col-span-2 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom de l'Équipe</label>
+                                <input type="text" id="form-team-name" placeholder="Ex: Montréal Impact Spike" class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Membres de l'Équipe (Séparés par des virgules)</label>
+                                <textarea id="form-team-members" rows="2" placeholder="Ex: Alice Smith, Bob Lemieux, Marc Dupuis..." class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Ajout de la Photo -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Photo de l'Athlète / de l'Équipe</label>
+                            <input type="file" id="form-photo" accept="image/*" required class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 file:cursor-pointer">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/20 flex justify-center items-center gap-2">
+                        <span>💾</span> Enregistrer le résultat
+                    </button>
+                </form>
+            </div>
+
+            <!-- ONGLET 2: TABLEAU DES RÉSULTATS -->
+            <div id="admin-tab-results" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-100">
+                    <h4 class="text-lg font-bold text-slate-900">Résultats Enregistrés</h4>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Lauréat / Épreuve</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Catégories</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Médaille</th>
+                                <th class="px-6 py-4 text-right font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="bg-white divide-y divide-slate-50">
+                            <!-- Rempli par JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ONGLET 3: CONFIGURATIONS DYNAMIQUES -->
+            <div id="admin-tab-configs" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Gestion des Sports -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        🏃‍♂️ Configuration des Sports
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" id="new-sport-name" placeholder="Nouveau sport" class="flex-grow p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="addNewSport()" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Ajouter</button>
+                        </div>
+                        <ul id="admin-sports-list" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 border-t border-slate-50 pt-2 text-sm">
+                            <!-- Rempli par JS -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Gestion des Sexes / Genres -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        ⚧️ Configuration des Genres
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" id="new-gender-name" placeholder="Nouveau genre/catégorie" class="flex-grow p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="addNewGender()" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Ajouter</button>
+                        </div>
+                        <ul id="admin-genders-list" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 border-t border-slate-50 pt-2 text-sm">
+                            <!-- Rempli par JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- COMPOSANTS DIALOGUES MODULAIRES PERSO (ZÉRO ALERT/CONFIRM NATIF) -->
+    <!-- Boîte de dialogue de Confirmation Personnalisée -->
+    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                ⚠️ Attention
+            </h3>
+            <p id="custom-confirm-message" class="text-slate-600 mt-2 text-sm"></p>
+            <div class="flex justify-end gap-3 mt-6">
+                <button id="custom-confirm-cancel" class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Annuler</button>
+                <button id="custom-confirm-ok" class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification (Succès, Alerte, Infos) -->
+    <div id="custom-toast" class="fixed bottom-5 right-5 z-[100] flex items-center gap-3 bg-slate-900 text-white px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 max-w-sm">
+        <span id="custom-toast-icon">✨</span>
+        <span id="custom-toast-message" class="text-sm font-semibold"></span>
+    </div>
+
+    <script>
+        // --- BASE DE DONNÉES LOCALE / INITIALISATION ---
+        const DB_KEY = 'gg2026_equipe_mtl_medals_v2';
+        const SPORTS_KEY = 'gg2026_sports_options';
+        const GENDERS_KEY = 'gg2026_genders_options';
+
+        let medalsData = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        let sportsList = JSON.parse(localStorage.getItem(SPORTS_KEY)) || ["Dodgeball", "Volleyball", "Beach Volley", "Badminton", "Tennis"];
+        let gendersList = JSON.parse(localStorage.getItem(GENDERS_KEY)) || ["Homme", "Femme", "Mixte"];
+
+        // Initialisation de données de démonstration de qualité si vide
+        if (medalsData.length === 0) {
+            medalsData = [
+                {
+                    id: 1,
+                    date: "2026-06-15",
+                    medal: "Or",
+                    sport: "Dodgeball",
+                    gender: "Mixte",
+                    category: "Tournoi Principal",
+                    subcategory: "Division Élite",
+                    ageGroup: "Tous âges",
+                    isTeam: true,
+                    teamName: "Montréal Caribou Blast",
+                    teamMembers: "Alexandre Dubois, Sarah Tremblay, Maxime Roy, Amélie Côté, Jean-François Lapointe, Marie-Noëlle Racine",
+                    photo: "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=1200"
+                },
+                {
+                    id: 2,
+                    date: "2026-06-16",
+                    medal: "Argent",
+                    sport: "Tennis",
+                    gender: "Homme",
+                    category: "Simple Messieurs",
+                    subcategory: "Série A",
+                    ageGroup: "30-39 ans",
+                    isTeam: false,
+                    athleteName: "Stéphane Gauthier",
+                    photo: "https://images.unsplash.com/photo-1552674605-15c2149b01a1?auto=format&fit=crop&q=80&w=1200"
+                },
+                {
+                    id: 3,
+                    date: "2026-06-18",
+                    medal: "Bronze",
+                    sport: "Beach Volley",
+                    gender: "Femme",
+                    category: "Double Féminin",
+                    subcategory: "Tournoi Pro",
+                    ageGroup: "18-29 ans",
+                    isTeam: true,
+                    teamName: "Les Sablonneuses de Montréal",
+                    teamMembers: "Chloé Bouchard, Sophie Laliberté",
+                    photo: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&q=80&w=1200"
+                }
+            ];
+            saveAllData();
+        }
+
+        function saveAllData() {
+            localStorage.setItem(DB_KEY, JSON.stringify(medalsData));
+            localStorage.setItem(SPORTS_KEY, JSON.stringify(sportsList));
+            localStorage.setItem(GENDERS_KEY, JSON.stringify(gendersList));
+        }
+
+        // --- SYSTÈME DE MODALES SÉCURISÉES SANS ALERT/CONFIRM ---
+        function showToast(message, icon = "✨") {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('custom-toast-icon').textContent = icon;
+            document.getElementById('custom-toast-message').textContent = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+
+        function requestConfirm(message, onConfirm) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const msgEl = document.getElementById('custom-confirm-message');
+            const btnCancel = document.getElementById('custom-confirm-cancel');
+            const btnOk = document.getElementById('custom-confirm-ok');
+
+            msgEl.textContent = message;
+            modal.classList.remove('hidden');
+
+            const cleanUp = () => {
+                modal.classList.add('hidden');
+                btnOk.onclick = null;
+                btnCancel.onclick = null;
+            };
+
+            btnCancel.onclick = () => {
+                cleanUp();
+            };
+
+            btnOk.onclick = () => {
+                onConfirm();
+                cleanUp();
+            };
+        }
+
+        // --- ONGLETS D'ADMINISTRATION ---
+        function switchAdminTab(tabId) {
+            // Cacher toutes les sections d'onglets
+            document.getElementById('admin-tab-form').classList.add('hidden');
+            document.getElementById('admin-tab-results').classList.add('hidden');
+            document.getElementById('admin-tab-configs').classList.add('hidden');
+
+            // Réinitialiser les styles des boutons
+            const tabs = ['form', 'results', 'configs'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                btn.className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800";
+            });
+
+            // Activer la section demandée et le bouton correspondant
+            if (tabId === 'form') {
+                document.getElementById('admin-tab-form').classList.remove('hidden');
+                document.getElementById('tab-btn-form').className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white shadow-sm";
+            } else if (tabId === 'results') {
+                document.getElementById('admin-tab-results').classList.remove('hidden');
+                document.getElementById('tab-btn-results').className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white shadow-sm";
+                renderAdminTable();
+            } else if (tabId === 'configs') {
+                document.getElementById('admin-tab-configs').classList.remove('hidden');
+                document.getElementById('tab-btn-configs').className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white shadow-sm";
+                renderSettingsLists();
+            }
+        }
+
+        // --- GESTION DES LISTES DYNAMIQUES D'ADMINISTRATION ---
+        function renderSettingsLists() {
+            const sportsContainer = document.getElementById('admin-sports-list');
+            sportsContainer.innerHTML = '';
+            sportsList.forEach((sport, index) => {
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded border border-slate-100";
+                li.innerHTML = `
+                    <span>${sport}</span>
+                    <button onclick="removeSport(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">Supprimer</button>
+                `;
+                sportsContainer.appendChild(li);
+            });
+
+            const gendersContainer = document.getElementById('admin-genders-list');
+            gendersContainer.innerHTML = '';
+            gendersList.forEach((gender, index) => {
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded border border-slate-100";
+                li.innerHTML = `
+                    <span>${gender}</span>
+                    <button onclick="removeGender(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">Supprimer</button>
+                `;
+                gendersContainer.appendChild(li);
+            });
+
+            updateFormDropdowns();
+        }
+
+        function updateFormDropdowns() {
+            const sportSelect = document.getElementById('form-sport');
+            const genderSelect = document.getElementById('form-gender');
+
+            const selectedSport = sportSelect.value;
+            const selectedGender = genderSelect.value;
+
+            sportSelect.innerHTML = '';
+            sportsList.forEach(sport => {
+                const opt = document.createElement('option');
+                opt.value = sport;
+                opt.textContent = sport;
+                sportSelect.appendChild(opt);
+            });
+
+            genderSelect.innerHTML = '';
+            gendersList.forEach(gender => {
+                const opt = document.createElement('option');
+                opt.value = gender;
+                opt.textContent = gender;
+                genderSelect.appendChild(opt);
+            });
+
+            if (sportsList.includes(selectedSport)) sportSelect.value = selectedSport;
+            if (gendersList.includes(selectedGender)) genderSelect.value = selectedGender;
+        }
+
+        function addNewSport() {
+            const input = document.getElementById('new-sport-name');
+            const val = input.value.trim();
+            if (val && !sportsList.includes(val)) {
+                sportsList.push(val);
+                saveAllData();
+                renderSettingsLists();
+                input.value = '';
+                showToast(`Sport "${val}" ajouté avec succès`, "🏃‍♂️");
+            }
+        }
+
+        function removeSport(index) {
+            const sportName = sportsList[index];
+            requestConfirm(`Voulez-vous supprimer le sport "${sportName}" des configurations ?`, () => {
+                sportsList.splice(index, 1);
+                saveAllData();
+                renderSettingsLists();
+                showToast(`Sport supprimé`, "🗑️");
+            });
+        }
+
+        function addNewGender() {
+            const input = document.getElementById('new-gender-name');
+            const val = input.value.trim();
+            if (val && !gendersList.includes(val)) {
+                gendersList.push(val);
+                saveAllData();
+                renderSettingsLists();
+                input.value = '';
+                showToast(`Catégorie/Genre "${val}" ajouté`, "⚧️");
+            }
+        }
+
+        function removeGender(index) {
+            const genderName = gendersList[index];
+            requestConfirm(`Voulez-vous supprimer la catégorie "${genderName}" des configurations ?`, () => {
+                gendersList.splice(index, 1);
+                saveAllData();
+                renderSettingsLists();
+                showToast(`Catégorie supprimée`, "🗑️");
+            });
+        }
+
+        // --- INTERFACE CONDITIONNELLE DU FORMULAIRE D'ACCORD AVEC LE TYPE DE SPORT ---
+        function toggleFormSportType() {
+            const selectedType = document.querySelector('input[name="form-sport-type"]:checked').value;
+            const indWrapper = document.getElementById('wrapper-individual');
+            const teamWrapper = document.getElementById('wrapper-team');
+
+            const athleteInput = document.getElementById('form-athlete-name');
+            const teamNameInput = document.getElementById('form-team-name');
+            const teamMembersInput = document.getElementById('form-team-members');
+
+            if (selectedType === 'individual') {
+                indWrapper.classList.remove('hidden');
+                teamWrapper.classList.add('hidden');
+                athleteInput.setAttribute('required', 'true');
+                teamNameInput.removeAttribute('required');
+                teamMembersInput.removeAttribute('required');
+            } else {
+                indWrapper.classList.add('hidden');
+                teamWrapper.classList.remove('hidden');
+                athleteInput.removeAttribute('required');
+                teamNameInput.setAttribute('required', 'true');
+                teamMembersInput.setAttribute('required', 'true');
+            }
+        }
+
+        // --- GESTION DES BADGES ET COULEURS ---
+        function getMedalColorClass(medal) {
+            if (medal === "Or") return "medal-card-or";
+            if (medal === "Argent") return "medal-card-argent";
+            return "medal-card-bronze";
+        }
+
+        function getMedalBadgeMarkup(medal) {
+            if (medal === "Or") return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1 shadow-sm">🥇 OR</span>`;
+            if (medal === "Argent") return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-1 shadow-sm">🥈 ARGENT</span>`;
+            return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-900/5 text-amber-800 border border-amber-900/10 flex items-center gap-1 shadow-sm">🥉 BRONZE</span>`;
+        }
+
+        function getMedalTvGradient(medal) {
+            if (medal === "Or") return "from-yellow-400 via-amber-300 to-amber-500";
+            if (medal === "Argent") return "from-slate-200 via-slate-100 to-slate-400";
+            return "from-amber-600 via-orange-400 to-amber-700";
+        }
+
+        // --- STREAMING_CHUNK: Gestion de l'affichage des différentes vues... -->
+        // --- NAVIGATION INTERNE ---
+        function showView(viewId) {
+            hideAllViews();
+            document.body.classList.remove('tv-mode-active');
+            stopSlideshow();
+
+            if (viewId === 'public-list') {
+                document.getElementById('view-public-list').classList.remove('hidden');
+                renderPublicList();
+            } else if (viewId === 'admin-dashboard') {
+                document.getElementById('view-admin-dashboard').classList.remove('hidden');
+                switchAdminTab('form'); // Activer le formulaire d'abord par défaut
+            }
+        }
+
+        function hideAllViews() {
+            document.getElementById('view-public-list').classList.add('hidden');
+            document.getElementById('view-tv').classList.add('hidden');
+            document.getElementById('view-admin-login').classList.add('hidden');
+            document.getElementById('view-admin-dashboard').classList.add('hidden');
+        }
+
+        // --- FILTRES DE LA LISTE PUBLIQUE ---
+        let currentFilter = 'Tous';
+        function filterMedals(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('bg-white', 'hover:bg-slate-100', 'text-slate-700', 'border', 'border-slate-200');
+            });
+            
+            const activeBtn = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.textContent.includes(filter) || (filter === 'Tous' && btn.textContent === 'Tous'));
+            if (activeBtn) {
+                activeBtn.classList.add('bg-slate-900', 'text-white');
+                activeBtn.classList.remove('bg-white', 'hover:bg-slate-100', 'text-slate-700', 'border', 'border-slate-200');
+            }
+            renderPublicList();
+        }
+
+        function formatDateToFrench(dateStr) {
+            if(!dateStr) return '';
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('fr-FR', options);
+        }
+
+        // --- STREAMING_CHUNK: Rendu de la grille publique... -->
+        // --- RENDU VUE 1 : GRILLE PUBLIQUE ---
+        function renderPublicList() {
+            const grid = document.getElementById('medals-grid');
+            grid.innerHTML = '';
+
+            let filtered = medalsData;
+            if (currentFilter !== 'Tous') {
+                filtered = medalsData.filter(m => m.medal === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                        <span class="text-4xl">🏅</span>
+                        <p class="mt-4 text-slate-500 font-medium">Aucun résultat à afficher pour le moment. Allez Montréal !</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const sortedData = [...filtered].sort((a, b) => {
+                const order = { "Or": 1, "Argent": 2, "Bronze": 3 };
+                if (order[a.medal] !== order[b.medal]) {
+                    return order[a.medal] - order[b.medal];
+                }
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            sortedData.forEach(item => {
+                const colorClass = getMedalColorClass(item.medal);
+                const badgeHtml = getMedalBadgeMarkup(item.medal);
+                const isTeam = item.isTeam === true;
+                const displayName = isTeam ? item.teamName : item.athleteName;
+                const typeIcon = isTeam ? '👥 Équipe' : '👤 Individuel';
+                
+                let membersSection = '';
+                if(isTeam && item.teamMembers) {
+                    membersSection = `
+                        <div class="mt-3 pt-2 border-t border-slate-100">
+                            <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Membres :</span>
+                            <p class="text-xs text-slate-500 italic truncate" title="${item.teamMembers}">
+                                ${item.teamMembers}
+                            </p>
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100/80 ${colorClass}`;
+                
+                card.innerHTML = `
+                    <div class="h-56 w-full relative overflow-hidden bg-slate-900">
+                        <img src="${item.photo}" alt="${displayName}" class="w-full h-full object-cover opacity-90 hover:scale-105 transition-all duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Equipe+Montreal'">
+                        <div class="absolute top-4 right-4 z-10">
+                            ${badgeHtml}
+                        </div>
+                        <div class="absolute bottom-4 left-4 z-10 bg-slate-950/65 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs font-bold tracking-wider uppercase">
+                            ${item.sport}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center text-xs font-medium text-slate-400 mb-2">
+                            <span>${typeIcon}</span>
+                            <span>📅 ${formatDateToFrench(item.date)}</span>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-slate-900 leading-tight mb-2 truncate" title="${displayName}">
+                            ${displayName}
+                        </h3>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-1 bg-slate-50 rounded-xl p-3 text-xs text-slate-600 mt-2 font-medium">
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-semibold">Genre</span>
+                                <span class="text-slate-800">${item.gender}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-semibold">Âge</span>
+                                <span class="text-slate-800">${item.ageGroup}</span>
+                            </div>
+                            <div class="col-span-2 border-t border-slate-200/50 pt-1.5 mt-1">
+                                <span class="text-slate-400 block text-[10px] uppercase font-semibold">Catégorie</span>
+                                <span class="text-slate-800 font-semibold block truncate" title="${item.category} (${item.subcategory})">
+                                    ${item.category} - <span class="font-normal text-slate-500">${item.subcategory}</span>
+                                </span>
+                            </div>
+                        </div>
+                        ${membersSection}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- STREAMING_CHUNK: Gestion et animation du Diaporama TV cinématique... -->
+        // --- RENDU VUE 2 : MODE TV NETFLIX STYLE ---
+        let slideInterval;
+        let currentSlide = 0;
+        const SLIDE_DURATION = 7500;
+
+        function startTVMode() {
+            hideAllViews();
+            document.body.classList.add('tv-mode-active');
+            
+            const tvView = document.getElementById('view-tv');
+            tvView.classList.remove('hidden');
+            
+            const container = document.getElementById('slideshow-container');
+            container.innerHTML = '';
+
+            if (medalsData.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-slate-400 gap-4">
+                        <span class="text-6xl animate-pulse">🏆</span>
+                        <div class="text-2xl font-bold">En attente des premiers résultats...</div>
+                    </div>
+                `;
+                return;
+            }
+
+            medalsData.forEach((item, index) => {
+                const isTeam = item.isTeam === true;
+                const displayName = isTeam ? item.teamName : item.athleteName;
+                const gradientColors = getMedalTvGradient(item.medal);
+
+                let teamHtml = '';
+                if (isTeam && item.teamMembers) {
+                    teamHtml = `
+                        <div class="mt-4 p-4 rounded-xl bg-slate-950/50 border border-slate-800/40">
+                            <div class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-1">Membres de l'équipe :</div>
+                            <div class="text-xs sm:text-sm text-slate-300 italic max-h-24 overflow-y-auto leading-relaxed">
+                                ${item.teamMembers}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const slide = document.createElement('div');
+                slide.className = `slide absolute inset-0 w-full h-full flex flex-col lg:flex-row items-stretch justify-between ${index === 0 ? 'active' : ''}`;
+                
+                slide.innerHTML = `
+                    <!-- Partie Gauche : Informations textuelles (sur fond solide #070b12 avec contrastes parfaits) -->
+                    <div class="w-full lg:w-[45%] p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#070b12] text-white z-20 space-y-4 lg:space-y-6 flex-shrink-0">
+                        
+                        <!-- Médaille & Date -->
+                        <div class="flex items-center gap-3">
+                            <span class="text-4xl md:text-5xl lg:text-6xl filter drop-shadow">
+                                ${item.medal === 'Or' ? '🥇' : item.medal === 'Argent' ? '🥈' : '🥉'}
+                            </span>
+                            <div>
+                                <h3 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r ${gradientColors} bg-clip-text text-transparent uppercase">
+                                    Médaille d'${item.medal === 'Or' ? 'Or' : item.medal === 'Argent' ? 'Argent' : 'Bronze'}
+                                </h3>
+                                <p class="text-xs text-slate-400 tracking-wider uppercase font-bold">VALENCIA 2026 • ${formatDateToFrench(item.date)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Nom (Jamais tronqué grâce au redimensionnement de boîte et mots auto-adaptatifs) -->
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-white drop-shadow-lg break-words">
+                            ${displayName}
+                        </h1>
+
+                        <!-- Tableau de spécifications sportives -->
+                        <div class="grid grid-cols-2 gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800/30 backdrop-blur-sm">
+                            <div>
+                                <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider block mb-0.5">Discipline</span>
+                                <span class="text-base sm:text-lg font-bold text-slate-100">${item.sport}</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider block mb-0.5">Genre / Division</span>
+                                <span class="text-base sm:text-lg font-bold text-slate-100">${item.gender}</span>
+                            </div>
+                            <div class="col-span-2 pt-2.5 border-t border-slate-800/50">
+                                <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider block mb-0.5">Épreuve / Catégorie</span>
+                                <span class="text-sm sm:text-base font-semibold text-slate-200">
+                                    ${item.category} <span class="text-slate-400 font-normal">(${item.subcategory})</span>
+                                </span>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider block mb-0.5">Groupe d'âge</span>
+                                <span class="text-sm font-semibold text-slate-300">${item.ageGroup}</span>
+                            </div>
+                        </div>
+
+                        <!-- Équipe et liste des membres -->
+                        ${teamHtml}
+                    </div>
+
+                    <!-- Partie Droite : La photo en arrière-plan avec effet fusion de Netflix -->
+                    <div class="relative flex-grow h-[45vh] lg:h-full overflow-hidden bg-slate-950">
+                        <img src="${item.photo}" class="w-full h-full object-cover object-center scale-100 lg:scale-105 transition-transform duration-[7500ms]" onerror="this.src='https://placehold.co/1200x800/0f172a/94a3b8?text=Equipe+Montreal'">
+                        <!-- Masque transparent dégradé progressif pour l'effet Netflix -->
+                        <div class="absolute inset-0 tv-photo-mask z-10 pointer-events-none"></div>
+                    </div>
+                `;
+                container.appendChild(slide);
+            });
+
+            currentSlide = 0;
+            resetSlideProgressBar();
+            slideInterval = setInterval(nextSlide, SLIDE_DURATION);
+        }
+
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length === 0) return;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+
+            resetSlideProgressBar();
+        }
+
+        function resetSlideProgressBar() {
+            const bar = document.getElementById('slide-progress');
+            if(!bar) return;
+            bar.style.transition = 'none';
+            bar.style.width = '0%';
+            
+            bar.offsetHeight; 
+            
+            bar.style.transition = `width ${SLIDE_DURATION}ms linear`;
+            bar.style.width = '100%';
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideInterval);
+        }
+
+        function stopTVMode() {
+            showView('public-list');
+        }
+
+        // --- ZONE DE CONNEXION ---
+        function showAdminLogin() {
+            hideAllViews();
+            document.getElementById('view-admin-login').classList.remove('hidden');
+        }
+
+        function checkPassword() {
+            const pwd = document.getElementById('admin-pwd').value;
+            if (pwd === 'Valence2026') {
+                document.getElementById('admin-pwd').value = '';
+                document.getElementById('login-error').classList.add('hidden');
+                showView('admin-dashboard');
+                showToast("Connexion d'administration réussie !", "🔐");
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            showView('public-list');
+            showToast("Vous avez été déconnecté.", "🚪");
+        }
+
+        // --- STREAMING_CHUNK: Tableau des médailles de l'Admin... -->
+        // --- RENDU VUE 4 : TABLEAU ADMIN ---
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+
+            if (medalsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+                            Aucun résultat enregistré. Utilisez l'onglet de saisie pour en ajouter !
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            medalsData.forEach(item => {
+                const displayName = item.isTeam === true ? `👥 ${item.teamName}` : `👤 ${item.athleteName}`;
+                
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden">
+                                <img class="h-10 w-10 object-cover" src="${item.photo}" alt="" onerror="this.src='https://placehold.co/100x100/0f172a/94a3b8?text=EM'">
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-900 truncate max-w-[200px]" title="${displayName}">${displayName}</div>
+                                <div class="text-xs text-slate-500 font-semibold">${item.sport} • ${item.gender}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
+                        ${formatDateToFrench(item.date)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500">
+                        <div class="font-semibold text-slate-800">${item.category}</div>
+                        <div class="truncate max-w-[150px]">${item.subcategory} (${item.ageGroup})</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${getMedalBadgeMarkup(item.medal)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold">
+                        <button onclick="deleteMedal(${item.id})" class="text-red-600 hover:text-red-950 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
+                            Supprimer
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- ENREGISTREMENT ET SUBMIT DU FORMULAIRE ---
+        document.getElementById('add-medal-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('form-photo');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast("Veuillez sélectionner une photo pour l'athlète ou l'équipe.", "⚠️");
+                return;
+            }
+
+            const selectedSportType = document.querySelector('input[name="form-sport-type"]:checked').value;
+            const isTeam = selectedSportType === 'team';
+
+            // Conversion en Base64 de la photo pour stockage local autonome
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const newMedal = {
+                    id: Date.now(),
+                    date: document.getElementById('form-date').value,
+                    medal: document.getElementById('form-medal').value,
+                    sport: document.getElementById('form-sport').value,
+                    gender: document.getElementById('form-gender').value,
+                    category: document.getElementById('form-category').value,
+                    subcategory: document.getElementById('form-subcategory').value,
+                    ageGroup: document.getElementById('form-age-group').value,
+                    isTeam: isTeam,
+                    athleteName: isTeam ? "" : document.getElementById('form-athlete-name').value,
+                    teamName: isTeam ? document.getElementById('form-team-name').value : "",
+                    teamMembers: isTeam ? document.getElementById('form-team-members').value : "",
+                    photo: event.target.result
+                };
+
+                medalsData.push(newMedal);
+                saveAllData();
+                
+                // Réinitialiser le formulaire
+                document.getElementById('add-medal-form').reset();
+                toggleFormSportType();
+                
+                showToast("Félicitations ! Le résultat a été enregistré avec succès.", "🏆");
+                
+                // Rediriger vers l'onglet des résultats
+                switchAdminTab('results');
+            };
+            
+            reader.readAsDataURL(file);
+        });
+
+        function deleteMedal(id) {
+            const medalObj = medalsData.find(item => item.id === id);
+            const medalName = medalObj ? (medalObj.isTeam ? medalObj.teamName : medalObj.athleteName) : "ce résultat";
+            
+            requestConfirm(`Êtes-vous sûr de vouloir retirer "${medalName}" du tableau d'honneur ?`, () => {
+                medalsData = medalsData.filter(item => item.id !== id);
+                saveAllData();
+                renderAdminTable();
+                showToast("Le résultat a été supprimé.", "🗑️");
+            });
+        }
+
+        // --- DEMARRAGE DE L'APPLICATION ---
+        showView('public-list');
+
+    </script>
+</body>
+</html>
