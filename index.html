@@ -184,8 +184,12 @@
         <!-- Entête -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-slate-100 pb-6">
             <div>
-                <h2 class="text-3xl font-extrabold text-slate-900">Console d'Administration</h2>
-                <p class="text-slate-500">Ajoutez les exploits d'athlètes et gérez les configurations</p>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-3xl font-extrabold text-slate-900">Console d'Administration</h2>
+                    <!-- Badge de statut de connexion intelligent -->
+                    <span id="db-status-badge" class="px-3 py-1 text-xs rounded-full font-bold">Initialisation...</span>
+                </div>
+                <p class="text-slate-500 mt-1">Ajoutez les exploits d'athlètes et gérez les configurations</p>
             </div>
             <button onclick="logoutAdmin()" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-xl transition">
                 Déconnexion 🚪
@@ -235,7 +239,7 @@
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sport</label>
                             <select id="form-sport" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                                <!-- Options chargées depuis localStorage -->
+                                <!-- Options chargées -->
                             </select>
                         </div>
 
@@ -243,7 +247,7 @@
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sexe / Genre</label>
                             <select id="form-gender" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                                <!-- Options chargées depuis localStorage -->
+                                <!-- Options chargées -->
                             </select>
                         </div>
 
@@ -391,21 +395,265 @@
         <span id="custom-toast-message" class="text-sm font-semibold"></span>
     </div>
 
-    <script>
-        // --- BASE DE DONNÉES LOCALE / INITIALISATION ---
-        const DB_KEY = 'gg2026_equipe_mtl_medals_v2';
-        const SPORTS_KEY = 'gg2026_sports_options';
-        const GENDERS_KEY = 'gg2026_genders_options';
+    <!-- SDK Firebase et Script Applicatif Principal -->
+    <script type="module">
+        // Import des bibliothèques Firebase officielles via CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            addDoc, 
+            setDoc,
+            getDocs,
+            deleteDoc, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signInWithCustomToken, 
+            signInAnonymously, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getStorage, 
+            ref, 
+            uploadBytes, 
+            getDownloadURL 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-        let medalsData = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        let sportsList = JSON.parse(localStorage.getItem(SPORTS_KEY)) || ["Dodgeball", "Volleyball", "Beach Volley", "Badminton", "Tennis"];
-        let gendersList = JSON.parse(localStorage.getItem(GENDERS_KEY)) || ["Homme", "Femme", "Mixte"];
+        // --- EXPOSITION EXPLICITE ET IMMÉDIATE DES FONCTIONS AU CONTEXTE WINDOW ---
+        // On fait cela en premier, de sorte que même si l'initialisation de Firebase plante,
+        // les clics sur les boutons ne lèveront pas d'erreurs "ReferenceError: xxx is not defined".
+        window.showView = showView;
+        window.startTVMode = startTVMode;
+        window.stopTVMode = stopTVMode;
+        window.showAdminLogin = showAdminLogin;
+        window.checkPassword = checkPassword;
+        window.logoutAdmin = logoutAdmin;
+        window.switchAdminTab = switchAdminTab;
+        window.toggleFormSportType = toggleFormSportType;
+        window.filterMedals = filterMedals;
+        window.addNewSport = addNewSport;
+        window.removeSport = removeSport;
+        window.addNewGender = addNewGender;
+        window.removeGender = removeGender;
 
-        // Initialisation de données de démonstration de qualité si vide
-        if (medalsData.length === 0) {
-            medalsData = [
+        // --- CONFIGURATION DE LA BASE DE DONNÉES ET INITIALISATION ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'gg2026-mtl';
+        
+        let firebaseConfig;
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            // ==========================================
+            // REMPLACEZ LES CLÉS CI-DESSOUS AVEC LES VÔTRES 
+            // POUR LE DÉPLOIEMENT FINAL SUR NETLIFY !
+            // ==========================================
+            firebaseConfig = {
+                apiKey: "AIzaSyAJL-xTCYAr-Y1JOG5ZMstL9JYIWLoRtDs",
+                authDomain: "gay-games-medailles-2e42c.firebaseapp.com",
+                projectId: "gay-games-medailles-2e42c",
+                storageBucket: "gay-games-medailles-2e42c.firebasestorage.app",
+                messagingSenderId: "790729129805",
+                appId: "1:790729129805:web:b988146653dee70f558104",
+                measurementId: "G-LMS1L38M99"
+            };
+        }
+
+        // Variables d'état de l'application
+        let medalsData = [];
+        let sportsList = [];
+        let gendersList = [];
+        let currentUser = null;
+        let useFirebase = false; // Mode hybride par défaut (vrai si clé API Firebase valide fournie)
+
+        // Services Firebase
+        let db, auth, storage;
+        let medaillesCollectionRef, sportsCollectionRef, gendersCollectionRef;
+
+        // --- VÉRIFICATION & INITIALISATION INDÉSTRUCTIBLE DE FIREBASE ---
+        const isFirebaseConfigValid = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey.trim() !== "";
+
+        if (isFirebaseConfigValid) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                try {
+                    storage = getStorage(app);
+                } catch(e) { 
+                    console.warn("Firebase Storage non accessible."); 
+                }
+
+                // Références de collections strictes
+                medaillesCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'medailles');
+                sportsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'sports');
+                gendersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'genders');
+
+                useFirebase = true;
+                
+                // Mettre à jour l'indicateur visuel d'administration
+                document.getElementById('db-status-badge').className = "px-3 py-1 text-xs rounded-full font-bold bg-green-100 text-green-700 border border-green-200";
+                document.getElementById('db-status-badge').textContent = "Connecté au Cloud (Firebase)";
+
+            } catch (err) {
+                console.error("Échec d'initialisation du SDK Firebase. Repli automatique en Mode Local Démo.", err);
+                fallbackToLocalStorageMode();
+            }
+        } else {
+            console.log("Aucune clé API Firebase configurée. Activation automatique du Mode Local Démo (localStorage).");
+            fallbackToLocalStorageMode();
+        }
+
+        // --- MODE DE REPLI LOCALSTORAGE ---
+        function fallbackToLocalStorageMode() {
+            useFirebase = false;
+
+            // Mettre à jour l'indicateur visuel d'administration
+            const badge = document.getElementById('db-status-badge');
+            if (badge) {
+                badge.className = "px-3 py-1 text-xs rounded-full font-bold bg-amber-100 text-amber-700 border border-amber-200";
+                badge.textContent = "Mode Local Démo (localStorage)";
+            }
+
+            // Chargement depuis localStorage
+            medalsData = JSON.parse(localStorage.getItem('gg2026_medals_local')) || [];
+            sportsList = JSON.parse(localStorage.getItem('gg2026_sports_local')) || ["Dodgeball", "Volleyball", "Beach Volley", "Badminton", "Tennis"];
+            gendersList = JSON.parse(localStorage.getItem('gg2026_genders_local')) || ["Homme", "Femme", "Mixte"];
+
+            // Injecter des données de démonstration par défaut si le stockage local est vide
+            if (medalsData.length === 0) {
+                medalsData = [
+                    {
+                        id: "demo-1",
+                        date: "2026-06-15",
+                        medal: "Or",
+                        sport: "Dodgeball",
+                        gender: "Mixte",
+                        category: "Tournoi Principal",
+                        subcategory: "Division Élite",
+                        ageGroup: "Tous âges",
+                        isTeam: true,
+                        teamName: "Montréal Caribou Blast",
+                        teamMembers: "Alexandre Dubois, Sarah Tremblay, Maxime Roy, Amélie Côté, Jean-François Lapointe, Marie-Noëlle Racine",
+                        photo: "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=1200"
+                    },
+                    {
+                        id: "demo-2",
+                        date: "2026-06-16",
+                        medal: "Argent",
+                        sport: "Tennis",
+                        gender: "Homme",
+                        category: "Simple Messieurs",
+                        subcategory: "Série A",
+                        ageGroup: "30-39 ans",
+                        isTeam: false,
+                        athleteName: "Stéphane Gauthier",
+                        photo: "https://images.unsplash.com/photo-1552674605-15c2149b01a1?auto=format&fit=crop&q=80&w=1200"
+                    }
+                ];
+                saveLocalData();
+            }
+
+            // Rafraîchir l'interface
+            renderPublicList();
+            renderAdminTable();
+            renderSettingsLists();
+        }
+
+        function saveLocalData() {
+            localStorage.setItem('gg2026_medals_local', JSON.stringify(medalsData));
+            localStorage.setItem('gg2026_sports_local', JSON.stringify(sportsList));
+            localStorage.setItem('gg2026_genders_local', JSON.stringify(gendersList));
+        }
+
+        // --- AUTHENTIFICATION SÉCURISÉE AVANT TOUTE REQUÊTE ---
+        const initAuth = async () => {
+            if (!useFirebase) return;
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+                        currentUser = userCredential.user;
+                    } catch (e) {
+                        const userCredential = await signInAnonymously(auth);
+                        currentUser = userCredential.user;
+                    }
+                } else {
+                    const userCredential = await signInAnonymously(auth);
+                    currentUser = userCredential.user;
+                }
+            } catch(e) {
+                console.error("Erreur d'authentification Firebase :", e);
+                fallbackToLocalStorageMode();
+            }
+        };
+
+        // Écouter le changement d'authentification
+        if (useFirebase) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    subscribeToCollections();
+                }
+            });
+            initAuth();
+        } else {
+            // Pas de Firebase : on affiche directement les listes locales au démarrage
+            setTimeout(() => {
+                renderPublicList();
+                renderSettingsLists();
+            }, 100);
+        }
+
+        // --- SYNCHRONISATION EN TEMPS RÉEL FIREBASE ---
+        function subscribeToCollections() {
+            if (!currentUser || !useFirebase) return;
+
+            // 1. Écouter les Médailles
+            onSnapshot(medaillesCollectionRef, (snapshot) => {
+                medalsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                if (medalsData.length === 0) {
+                    seedDefaultMedals();
+                } else {
+                    renderPublicList();
+                    renderAdminTable();
+                }
+            }, (error) => {
+                console.error("Erreur Firestore Medailles:", error);
+            });
+
+            // 2. Écouter la liste des Sports
+            onSnapshot(sportsCollectionRef, (snapshot) => {
+                if (snapshot.empty) {
+                    seedDefaultSports();
+                } else {
+                    sportsList = snapshot.docs.map(doc => doc.data().name);
+                    renderSettingsLists();
+                }
+            }, (error) => {
+                console.error("Erreur Firestore Sports:", error);
+            });
+
+            // 3. Écouter la liste des Genres
+            onSnapshot(gendersCollectionRef, (snapshot) => {
+                if (snapshot.empty) {
+                    seedDefaultGenders();
+                } else {
+                    gendersList = snapshot.docs.map(doc => doc.data().name);
+                    renderSettingsLists();
+                }
+            }, (error) => {
+                console.error("Erreur Firestore Genres:", error);
+            });
+        }
+
+        // --- SEEDERS D'INITIALISATION FIREBASE (Si base vide) ---
+        async function seedDefaultMedals() {
+            const defaults = [
                 {
-                    id: 1,
                     date: "2026-06-15",
                     medal: "Or",
                     sport: "Dodgeball",
@@ -419,7 +667,6 @@
                     photo: "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=1200"
                 },
                 {
-                    id: 2,
                     date: "2026-06-16",
                     medal: "Argent",
                     sport: "Tennis",
@@ -430,30 +677,199 @@
                     isTeam: false,
                     athleteName: "Stéphane Gauthier",
                     photo: "https://images.unsplash.com/photo-1552674605-15c2149b01a1?auto=format&fit=crop&q=80&w=1200"
-                },
-                {
-                    id: 3,
-                    date: "2026-06-18",
-                    medal: "Bronze",
-                    sport: "Beach Volley",
-                    gender: "Femme",
-                    category: "Double Féminin",
-                    subcategory: "Tournoi Pro",
-                    ageGroup: "18-29 ans",
-                    isTeam: true,
-                    teamName: "Les Sablonneuses de Montréal",
-                    teamMembers: "Chloé Bouchard, Sophie Laliberté",
-                    photo: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&q=80&w=1200"
                 }
             ];
-            saveAllData();
+            for (const item of defaults) {
+                await addDoc(medaillesCollectionRef, item);
+            }
         }
 
-        function saveAllData() {
-            localStorage.setItem(DB_KEY, JSON.stringify(medalsData));
-            localStorage.setItem(SPORTS_KEY, JSON.stringify(sportsList));
-            localStorage.setItem(GENDERS_KEY, JSON.stringify(gendersList));
+        async function seedDefaultSports() {
+            const list = ["Dodgeball", "Volleyball", "Beach Volley", "Badminton", "Tennis"];
+            for (const sport of list) {
+                const docId = sport.toLowerCase().replace(/\s+/g, '-');
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sports', docId), { name: sport });
+            }
         }
+
+        async function seedDefaultGenders() {
+            const list = ["Homme", "Femme", "Mixte"];
+            for (const gender of list) {
+                const docId = gender.toLowerCase().replace(/\s+/g, '-');
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'genders', docId), { name: gender });
+            }
+        }
+
+        // --- ACTIONS SUR LES CONFIGURATIONS (SPORTS & GENRES) ---
+        async function addNewSport() {
+            const input = document.getElementById('new-sport-name');
+            const val = input.value.trim();
+            if (!val) return;
+
+            if (useFirebase) {
+                if (!currentUser) return;
+                const docId = val.toLowerCase().replace(/\s+/g, '-');
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sports', docId), { name: val });
+            } else {
+                if (!sportsList.includes(val)) {
+                    sportsList.push(val);
+                    saveLocalData();
+                    renderSettingsLists();
+                }
+            }
+            input.value = '';
+            showToast(`Sport "${val}" ajouté avec succès`, "🏃‍♂️");
+        }
+
+        async function removeSport(index) {
+            const sportName = sportsList[index];
+            requestConfirm(`Voulez-vous supprimer le sport "${sportName}" des configurations ?`, async () => {
+                if (useFirebase) {
+                    if (!currentUser) return;
+                    const docId = sportName.toLowerCase().replace(/\s+/g, '-');
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sports', docId));
+                } else {
+                    sportsList.splice(index, 1);
+                    saveLocalData();
+                    renderSettingsLists();
+                }
+                showToast(`Sport supprimé`, "🗑️");
+            });
+        }
+
+        async function addNewGender() {
+            const input = document.getElementById('new-gender-name');
+            const val = input.value.trim();
+            if (!val) return;
+
+            if (useFirebase) {
+                if (!currentUser) return;
+                const docId = val.toLowerCase().replace(/\s+/g, '-');
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'genders', docId), { name: val });
+            } else {
+                if (!gendersList.includes(val)) {
+                    gendersList.push(val);
+                    saveLocalData();
+                    renderSettingsLists();
+                }
+            }
+            input.value = '';
+            showToast(`Catégorie/Genre "${val}" ajouté`, "⚧️");
+        }
+
+        async function removeGender(index) {
+            const genderName = gendersList[index];
+            requestConfirm(`Voulez-vous supprimer la catégorie "${genderName}" des configurations ?`, async () => {
+                if (useFirebase) {
+                    if (!currentUser) return;
+                    const docId = genderName.toLowerCase().replace(/\s+/g, '-');
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'genders', docId));
+                } else {
+                    gendersList.splice(index, 1);
+                    saveLocalData();
+                    renderSettingsLists();
+                }
+                showToast(`Catégorie supprimée`, "🗑️");
+            });
+        }
+
+        async function deleteMedal(id) {
+            const medalObj = medalsData.find(item => item.id === id);
+            const medalName = medalObj ? (medalObj.isTeam ? medalObj.teamName : medalObj.athleteName) : "ce résultat";
+            
+            requestConfirm(`Êtes-vous sûr de vouloir retirer "${medalName}" du tableau d'honneur ?`, async () => {
+                if (useFirebase) {
+                    if (!currentUser) return;
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'medailles', id));
+                } else {
+                    medalsData = medalsData.filter(item => item.id !== id);
+                    saveLocalData();
+                    renderAdminTable();
+                    renderPublicList();
+                }
+                showToast("Le résultat a été supprimé.", "🗑️");
+            });
+        }
+
+        // --- ENREGISTREMENT DU FORMULAIRE ET COMPRESSION PHOTO ---
+        document.getElementById('add-medal-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('form-photo');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast("Veuillez sélectionner une photo pour l'athlète ou l'équipe.", "⚠️");
+                return;
+            }
+
+            const selectedSportType = document.querySelector('input[name="form-sport-type"]:checked').value;
+            const isTeam = selectedSportType === 'team';
+
+            showToast("Téléchargement et enregistrement en cours...", "🔄");
+
+            try {
+                let photoUrl = "";
+
+                // Tentative de stockage Cloud Storage (si actif)
+                if (useFirebase && storage) {
+                    try {
+                        const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}_${file.name}`);
+                        const snapshot = await uploadBytes(storageRef, file);
+                        photoUrl = await getDownloadURL(snapshot.ref);
+                    } catch(storageErr) {
+                        console.warn("Storage upload failed, falling back to base64 inline encoding", storageErr);
+                    }
+                }
+
+                // Fallback ou stockage local : Conversion Base64
+                if (!photoUrl) {
+                    photoUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (event) => resolve(event.target.result);
+                        reader.onerror = (err) => reject(err);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                const newMedal = {
+                    date: document.getElementById('form-date').value,
+                    medal: document.getElementById('form-medal').value,
+                    sport: document.getElementById('form-sport').value,
+                    gender: document.getElementById('form-gender').value,
+                    category: document.getElementById('form-category').value,
+                    subcategory: document.getElementById('form-subcategory').value,
+                    ageGroup: document.getElementById('form-age-group').value,
+                    isTeam: isTeam,
+                    athleteName: isTeam ? "" : document.getElementById('form-athlete-name').value,
+                    teamName: isTeam ? document.getElementById('form-team-name').value : "",
+                    teamMembers: isTeam ? document.getElementById('form-team-members').value : "",
+                    photo: photoUrl
+                };
+
+                if (useFirebase) {
+                    await addDoc(medaillesCollectionRef, newMedal);
+                } else {
+                    // Ajout local
+                    newMedal.id = "local-" + Date.now();
+                    medalsData.push(newMedal);
+                    saveLocalData();
+                    renderAdminTable();
+                    renderPublicList();
+                }
+                
+                // Réinitialiser le formulaire
+                document.getElementById('add-medal-form').reset();
+                toggleFormSportType();
+                
+                showToast("Félicitations ! Le résultat a été enregistré avec succès.", "🏆");
+                switchAdminTab('results');
+
+            } catch(err) {
+                console.error("Enregistrement échoué:", err);
+                showToast("Erreur lors de l'enregistrement.", "❌");
+            }
+        });
 
         // --- SYSTÈME DE MODALES SÉCURISÉES SANS ALERT/CONFIRM ---
         function showToast(message, icon = "✨") {
@@ -497,19 +913,18 @@
 
         // --- ONGLETS D'ADMINISTRATION ---
         function switchAdminTab(tabId) {
-            // Cacher toutes les sections d'onglets
             document.getElementById('admin-tab-form').classList.add('hidden');
             document.getElementById('admin-tab-results').classList.add('hidden');
             document.getElementById('admin-tab-configs').classList.add('hidden');
 
-            // Réinitialiser les styles des boutons
             const tabs = ['form', 'results', 'configs'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`tab-btn-${t}`);
-                btn.className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800";
+                if (btn) {
+                    btn.className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800";
+                }
             });
 
-            // Activer la section demandée et le bouton correspondant
             if (tabId === 'form') {
                 document.getElementById('admin-tab-form').classList.remove('hidden');
                 document.getElementById('tab-btn-form').className = "px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white shadow-sm";
@@ -527,28 +942,32 @@
         // --- GESTION DES LISTES DYNAMIQUES D'ADMINISTRATION ---
         function renderSettingsLists() {
             const sportsContainer = document.getElementById('admin-sports-list');
-            sportsContainer.innerHTML = '';
-            sportsList.forEach((sport, index) => {
-                const li = document.createElement('li');
-                li.className = "flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded border border-slate-100";
-                li.innerHTML = `
-                    <span>${sport}</span>
-                    <button onclick="removeSport(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">Supprimer</button>
-                `;
-                sportsContainer.appendChild(li);
-            });
+            if(sportsContainer) {
+                sportsContainer.innerHTML = '';
+                sportsList.forEach((sport, index) => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded border border-slate-100";
+                    li.innerHTML = `
+                        <span>${sport}</span>
+                        <button onclick="removeSport(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">Supprimer</button>
+                    `;
+                    sportsContainer.appendChild(li);
+                });
+            }
 
             const gendersContainer = document.getElementById('admin-genders-list');
-            gendersContainer.innerHTML = '';
-            gendersList.forEach((gender, index) => {
-                const li = document.createElement('li');
-                li.className = "flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded border border-slate-100";
-                li.innerHTML = `
-                    <span>${gender}</span>
-                    <button onclick="removeGender(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">Supprimer</button>
-                `;
-                gendersContainer.appendChild(li);
-            });
+            if(gendersContainer) {
+                gendersContainer.innerHTML = '';
+                gendersList.forEach((gender, index) => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded border border-slate-100";
+                    li.innerHTML = `
+                        <span>${gender}</span>
+                        <button onclick="removeGender(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">Supprimer</button>
+                    `;
+                    gendersContainer.appendChild(li);
+                });
+            }
 
             updateFormDropdowns();
         }
@@ -556,6 +975,7 @@
         function updateFormDropdowns() {
             const sportSelect = document.getElementById('form-sport');
             const genderSelect = document.getElementById('form-gender');
+            if(!sportSelect || !genderSelect) return;
 
             const selectedSport = sportSelect.value;
             const selectedGender = genderSelect.value;
@@ -580,51 +1000,7 @@
             if (gendersList.includes(selectedGender)) genderSelect.value = selectedGender;
         }
 
-        function addNewSport() {
-            const input = document.getElementById('new-sport-name');
-            const val = input.value.trim();
-            if (val && !sportsList.includes(val)) {
-                sportsList.push(val);
-                saveAllData();
-                renderSettingsLists();
-                input.value = '';
-                showToast(`Sport "${val}" ajouté avec succès`, "🏃‍♂️");
-            }
-        }
-
-        function removeSport(index) {
-            const sportName = sportsList[index];
-            requestConfirm(`Voulez-vous supprimer le sport "${sportName}" des configurations ?`, () => {
-                sportsList.splice(index, 1);
-                saveAllData();
-                renderSettingsLists();
-                showToast(`Sport supprimé`, "🗑️");
-            });
-        }
-
-        function addNewGender() {
-            const input = document.getElementById('new-gender-name');
-            const val = input.value.trim();
-            if (val && !gendersList.includes(val)) {
-                gendersList.push(val);
-                saveAllData();
-                renderSettingsLists();
-                input.value = '';
-                showToast(`Catégorie/Genre "${val}" ajouté`, "⚧️");
-            }
-        }
-
-        function removeGender(index) {
-            const genderName = gendersList[index];
-            requestConfirm(`Voulez-vous supprimer la catégorie "${genderName}" des configurations ?`, () => {
-                gendersList.splice(index, 1);
-                saveAllData();
-                renderSettingsLists();
-                showToast(`Catégorie supprimée`, "🗑️");
-            });
-        }
-
-        // --- INTERFACE CONDITIONNELLE DU FORMULAIRE D'ACCORD AVEC LE TYPE DE SPORT ---
+        // --- INTERFACE CONDITIONNELLE DU FORMULAIRE ---
         function toggleFormSportType() {
             const selectedType = document.querySelector('input[name="form-sport-type"]:checked').value;
             const indWrapper = document.getElementById('wrapper-individual');
@@ -668,7 +1044,6 @@
             return "from-amber-600 via-orange-400 to-amber-700";
         }
 
-        // --- STREAMING_CHUNK: Gestion de l'affichage des différentes vues... -->
         // --- NAVIGATION INTERNE ---
         function showView(viewId) {
             hideAllViews();
@@ -680,7 +1055,7 @@
                 renderPublicList();
             } else if (viewId === 'admin-dashboard') {
                 document.getElementById('view-admin-dashboard').classList.remove('hidden');
-                switchAdminTab('form'); // Activer le formulaire d'abord par défaut
+                switchAdminTab('form');
             }
         }
 
@@ -714,10 +1089,10 @@
             return new Date(dateStr).toLocaleDateString('fr-FR', options);
         }
 
-        // --- STREAMING_CHUNK: Rendu de la grille publique... -->
         // --- RENDU VUE 1 : GRILLE PUBLIQUE ---
         function renderPublicList() {
             const grid = document.getElementById('medals-grid');
+            if(!grid) return;
             grid.innerHTML = '';
 
             let filtered = medalsData;
@@ -806,7 +1181,6 @@
             });
         }
 
-        // --- STREAMING_CHUNK: Gestion et animation du Diaporama TV cinématique... -->
         // --- RENDU VUE 2 : MODE TV NETFLIX STYLE ---
         let slideInterval;
         let currentSlide = 0;
@@ -820,6 +1194,7 @@
             tvView.classList.remove('hidden');
             
             const container = document.getElementById('slideshow-container');
+            if(!container) return;
             container.innerHTML = '';
 
             if (medalsData.length === 0) {
@@ -853,7 +1228,7 @@
                 slide.className = `slide absolute inset-0 w-full h-full flex flex-col lg:flex-row items-stretch justify-between ${index === 0 ? 'active' : ''}`;
                 
                 slide.innerHTML = `
-                    <!-- Partie Gauche : Informations textuelles (sur fond solide #070b12 avec contrastes parfaits) -->
+                    <!-- Partie Gauche : Informations textuelles -->
                     <div class="w-full lg:w-[45%] p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#070b12] text-white z-20 space-y-4 lg:space-y-6 flex-shrink-0">
                         
                         <!-- Médaille & Date -->
@@ -869,7 +1244,7 @@
                             </div>
                         </div>
 
-                        <!-- Nom (Jamais tronqué grâce au redimensionnement de boîte et mots auto-adaptatifs) -->
+                        <!-- Nom (Jamais tronqué) -->
                         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-white drop-shadow-lg break-words">
                             ${displayName}
                         </h1>
@@ -969,10 +1344,10 @@
             showToast("Vous avez été déconnecté.", "🚪");
         }
 
-        // --- STREAMING_CHUNK: Tableau des médailles de l'Admin... -->
-        // --- RENDU VUE 4 : TABLEAU ADMIN ---
+        // --- RENDU TABLEAU ADMIN ---
         function renderAdminTable() {
             const tbody = document.getElementById('admin-table-body');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             if (medalsData.length === 0) {
@@ -1014,79 +1389,23 @@
                         ${getMedalBadgeMarkup(item.medal)}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold">
-                        <button onclick="deleteMedal(${item.id})" class="text-red-600 hover:text-red-950 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
+                        <button class="delete-medal-btn text-red-600 hover:text-red-950 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
                             Supprimer
                         </button>
                     </td>
                 `;
+
+                // Attacher le clic
+                tr.querySelector('.delete-medal-btn').addEventListener('click', () => {
+                    deleteMedal(item.id);
+                });
+
                 tbody.appendChild(tr);
             });
         }
 
-        // --- ENREGISTREMENT ET SUBMIT DU FORMULAIRE ---
-        document.getElementById('add-medal-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const fileInput = document.getElementById('form-photo');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                showToast("Veuillez sélectionner une photo pour l'athlète ou l'équipe.", "⚠️");
-                return;
-            }
-
-            const selectedSportType = document.querySelector('input[name="form-sport-type"]:checked').value;
-            const isTeam = selectedSportType === 'team';
-
-            // Conversion en Base64 de la photo pour stockage local autonome
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const newMedal = {
-                    id: Date.now(),
-                    date: document.getElementById('form-date').value,
-                    medal: document.getElementById('form-medal').value,
-                    sport: document.getElementById('form-sport').value,
-                    gender: document.getElementById('form-gender').value,
-                    category: document.getElementById('form-category').value,
-                    subcategory: document.getElementById('form-subcategory').value,
-                    ageGroup: document.getElementById('form-age-group').value,
-                    isTeam: isTeam,
-                    athleteName: isTeam ? "" : document.getElementById('form-athlete-name').value,
-                    teamName: isTeam ? document.getElementById('form-team-name').value : "",
-                    teamMembers: isTeam ? document.getElementById('form-team-members').value : "",
-                    photo: event.target.result
-                };
-
-                medalsData.push(newMedal);
-                saveAllData();
-                
-                // Réinitialiser le formulaire
-                document.getElementById('add-medal-form').reset();
-                toggleFormSportType();
-                
-                showToast("Félicitations ! Le résultat a été enregistré avec succès.", "🏆");
-                
-                // Rediriger vers l'onglet des résultats
-                switchAdminTab('results');
-            };
-            
-            reader.readAsDataURL(file);
-        });
-
-        function deleteMedal(id) {
-            const medalObj = medalsData.find(item => item.id === id);
-            const medalName = medalObj ? (medalObj.isTeam ? medalObj.teamName : medalObj.athleteName) : "ce résultat";
-            
-            requestConfirm(`Êtes-vous sûr de vouloir retirer "${medalName}" du tableau d'honneur ?`, () => {
-                medalsData = medalsData.filter(item => item.id !== id);
-                saveAllData();
-                renderAdminTable();
-                showToast("Le résultat a été supprimé.", "🗑️");
-            });
-        }
-
-        // --- DEMARRAGE DE L'APPLICATION ---
-        showView('public-list');
+        // --- PREMIER RENDER ---
+        renderPublicList();
 
     </script>
 </body>
