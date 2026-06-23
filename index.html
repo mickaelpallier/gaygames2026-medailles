@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes subtle-flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
+
         body {
             background: linear-gradient(-45deg, #f8fafc, #f1f5f9, #fafaf9, #f8fafc);
             background-size: 400% 400%;
@@ -24,40 +34,53 @@
             border-top: 5px solid #eab308;
             box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.15);
         }
+
         .medal-card-argent {
             border-top: 5px solid #94a3b8;
             box-shadow: 0 10px 30px -10px rgba(148, 163, 184, 0.15);
         }
+
         .medal-card-bronze {
             border-top: 5px solid #ca8a04;
             box-shadow: 0 10px 30px -10px rgba(202, 138, 4, 0.15);
         }
 
         /* Mode TV optimisé et plein écran style Netflix */
-        .tv-mode-active #navbar { display: none; }
-        .tv-mode-active body { background: #070b12; overflow: hidden; }
+        .tv-mode-active #navbar {
+            display: none;
+        }
+
+        .tv-mode-active body {
+            background: #070b12;
+            overflow: hidden;
+        }
 
         .slide {
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: none;
-            height: 100%; /* S'assure que la slide prend toute la hauteur */
-        }
-        .slide.active {
-            opacity: 1;
-            display: flex;
+            height: 100%;
+            overflow: hidden;
         }
 
-        /* Dégradé de fusion Netflix sur la photo */
+        .slide.active {
+            opacity: 1;
+            display: block;
+        }
+
+        /* Dégradé de fusion Netflix sur la photo (de gauche à droite, contenu à gauche) */
         .tv-photo-mask {
-            background: linear-gradient(to right, #070b12 0%, #070b12 20%, rgba(7, 11, 18, 0.4) 50%, rgba(7, 11, 18, 0) 100%);
+            background: linear-gradient(to right, #070b12 0%, #070b12 22%, rgba(7, 11, 18, 0.5) 55%, rgba(7, 11, 18, 0) 100%);
         }
 
         @media (max-width: 1023px) {
             .tv-photo-mask {
-                background: linear-gradient(to top, #070b12 0%, #070b12 40%, rgba(7, 11, 18, 0.7) 70%, rgba(7, 11, 18, 0) 100%);
+                background: linear-gradient(to right, #070b12 0%, rgba(7, 11, 18, 0.95) 55%, rgba(7, 11, 18, 0.5) 80%, rgba(7, 11, 18, 0) 100%);
             }
         }
 
@@ -66,37 +89,47 @@
             width: 6px;
             height: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 3px;
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col text-slate-800">
 
     <!-- BARRE DE NAVIGATION -->
-    <nav id="navbar" class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50 transition-all duration-300">
+    <nav id="navbar"
+        class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center sm:justify-between items-center h-28 sm:h-20 flex-col sm:flex-row gap-2">
                 <!-- Logos -->
                 <div class="flex items-center space-x-4">
-                    <img src="GG-H.png" alt="Gay Games Valencia 2026" class="h-12 object-contain hover:scale-105 transition" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Gay+Games+2026'">
+                    <img src="GG-H.png" alt="Gay Games Valencia 2026"
+                        class="h-12 object-contain hover:scale-105 transition"
+                        onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Gay+Games+2026'">
                     <span class="text-3xl font-extralight text-slate-200">|</span>
-                    <img src="EM-H.png" alt="Équipe Montréal" class="h-12 object-contain hover:scale-105 transition" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Equipe+Montreal'">
+                    <img src="EM-H.png" alt="Équipe Montréal" class="h-12 object-contain hover:scale-105 transition"
+                        onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Equipe+Montreal'">
                 </div>
-                
+
                 <!-- Boutons d'action rapides -->
                 <div class="flex space-x-2 sm:space-x-3">
-                    <button onclick="showView('public-list')" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm sm:text-base transition flex items-center gap-2">
+                    <button onclick="showView('public-list')"
+                        class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm sm:text-base transition flex items-center gap-2">
                         📋 <span class="hidden sm:inline">Liste</span>
                     </button>
-                    <button onclick="startTVMode()" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm sm:text-base transition flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                    <button onclick="startTVMode()"
+                        class="px-3 sm:px-5 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm sm:text-base transition flex items-center gap-2 shadow-lg shadow-indigo-600/20">
                         📺 <span>Mode TV</span>
                     </button>
-                    <button onclick="showAdminLogin()" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-semibold text-sm sm:text-base transition flex items-center gap-2">
+                    <button onclick="showAdminLogin()"
+                        class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-semibold text-sm sm:text-base transition flex items-center gap-2">
                         ⚙️ <span class="hidden sm:inline">Admin</span>
                     </button>
                 </div>
@@ -118,10 +151,17 @@
 
         <!-- Filtres rapides -->
         <div class="flex flex-wrap justify-center gap-3 mb-10">
-            <button onclick="filterMedals('Tous')" class="filter-btn px-4 py-2 rounded-full bg-slate-900 text-white font-medium transition text-sm">Tous</button>
-            <button onclick="filterMedals('Or')" class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥇 Or</button>
-            <button onclick="filterMedals('Argent')" class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥈 Argent</button>
-            <button onclick="filterMedals('Bronze')" class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥉 Bronze</button>
+            <button onclick="filterMedals('Tous')"
+                class="filter-btn px-4 py-2 rounded-full bg-slate-900 text-white font-medium transition text-sm">Tous</button>
+            <button onclick="filterMedals('Or')"
+                class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥇
+                Or</button>
+            <button onclick="filterMedals('Argent')"
+                class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥈
+                Argent</button>
+            <button onclick="filterMedals('Bronze')"
+                class="filter-btn px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition text-sm flex items-center gap-1">🥉
+                Bronze</button>
         </div>
 
         <!-- Grille des Médaillés -->
@@ -133,13 +173,17 @@
     <!-- VUE 2 : DIAPORAMA TV (STYLE CINÉMATIQUE / NETFLIX) -->
     <main id="view-tv" class="hidden fixed inset-0 z-50 bg-[#070b12] flex flex-col justify-between">
         <!-- Bandeau supérieur discret -->
-        <div class="p-6 flex justify-between items-center border-b border-slate-800/40 bg-slate-950/80 backdrop-blur-md z-30">
+        <div
+            class="p-6 flex justify-between items-center border-b border-slate-800/40 bg-slate-950/80 backdrop-blur-md z-30">
             <div class="flex items-center space-x-4">
-                <img src="GG-H-Blanc.png" alt="Équipe Montréal" class="h-10 object-contain brightness-110" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Gay+Games+Valence+2026'">
+                <img src="GG-H-Blanc.png" alt="Équipe Montréal" class="h-10 object-contain brightness-110"
+                    onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Gay+Games+Valence+2026'">
                 <span class="text-slate-600 font-light text-xl">|</span>
-                <img src="EM-H.png" alt="Équipe Montréal" class="h-10 object-contain brightness-110" onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Equipe+Montreal'">
+                <img src="EM-H.png" alt="Équipe Montréal" class="h-10 object-contain brightness-110"
+                    onerror="this.src='https://placehold.co/150x50/e0e7ff/3730a3?text=Equipe+Montreal'">
             </div>
-            <button onclick="stopTVMode()" class="px-5 py-2 bg-slate-850 hover:bg-slate-800 border border-slate-800 text-white rounded-full transition flex items-center gap-2 text-sm font-semibold shadow-lg">
+            <button onclick="stopTVMode()"
+                class="px-5 py-2 bg-slate-850 hover:bg-slate-800 border border-slate-800 text-white rounded-full transition flex items-center gap-2 text-sm font-semibold shadow-lg">
                 <span>❌</span> Quitter la TV
             </button>
         </div>
@@ -151,7 +195,8 @@
 
         <!-- Pied de page avec barre de progression de la diapositive -->
         <div class="h-1.5 w-full bg-slate-950/80 z-30">
-            <div id="slide-progress" class="h-full bg-indigo-500 transition-all duration-7500 ease-linear" style="width: 0%"></div>
+            <div id="slide-progress" class="h-full bg-indigo-500 transition-all duration-7500 ease-linear"
+                style="width: 0%"></div>
         </div>
     </main>
 
@@ -164,14 +209,19 @@
                 <p class="text-slate-400 text-sm mt-1">Saisissez le mot de passe pour gérer les médailles</p>
             </div>
             <div class="space-y-4">
-                <input type="password" id="admin-pwd" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Mot de passe">
-                <button onclick="checkPassword()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20">
+                <input type="password" id="admin-pwd"
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    placeholder="Mot de passe">
+                <button onclick="checkPassword()"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20">
                     Se connecter
                 </button>
-                <button onclick="showView('public-list')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition">
+                <button onclick="showView('public-list')"
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition">
                     Retour à l'accueil
                 </button>
-                <p id="login-error" class="text-red-500 text-sm text-center font-medium hidden">⚠️ Mot de passe incorrect</p>
+                <p id="login-error" class="text-red-500 text-sm text-center font-medium hidden">⚠️ Mot de passe
+                    incorrect</p>
             </div>
         </div>
     </main>
@@ -179,38 +229,43 @@
     <!-- VUE 4 : TABLEAU DE BORD D'ADMINISTRATION (ORGANISÉ EN ONGLETS) -->
     <main id="view-admin-dashboard" class="hidden flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         <!-- Entête -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-slate-100 pb-6">
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-0 border-b border-slate-100 pb-6">
             <div>
                 <div class="flex items-center gap-3">
                     <h2 class="text-3xl font-extrabold text-slate-900">Console d'Administration</h2>
                     <!-- Badge de statut de connexion intelligent -->
-                    <span id="db-status-badge" class="px-3 py-1 text-xs rounded-full font-bold">Initialisation...</span>
                 </div>
                 <p class="text-slate-500 mt-1">Ajoutez les exploits d'athlètes et gérez les configurations</p>
             </div>
-            <button onclick="logoutAdmin()" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-xl transition">
+            <button onclick="logoutAdmin()"
+                class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-xl transition">
                 Déconnexion 🚪
             </button>
         </div>
 
         <!-- Onglets de Navigation Admin -->
         <div class="flex border-b border-slate-200 mb-8 space-x-1 overflow-x-auto">
-            <button id="tab-btn-form" onclick="switchAdminTab('form')" class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white">
-                🏅 Saisir un Nouveau Résultat
+            <button id="tab-btn-form" onclick="switchAdminTab('form')"
+                class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white">
+                🏅 <span class="hidden sm:inline">Saisir un </span>Nouveau Résultat
             </button>
-            <button id="tab-btn-results" onclick="switchAdminTab('results')" class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800">
+            <button id="tab-btn-results" onclick="switchAdminTab('results')"
+                class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800">
                 📋 Résultats Enregistrés
             </button>
-            <button id="tab-btn-configs" onclick="switchAdminTab('configs')" class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800">
-                ⚙️ Configurations (Sports/Genres)
+            <button id="tab-btn-configs" onclick="switchAdminTab('configs')"
+                class="px-6 py-3 font-semibold text-sm transition-all rounded-t-xl text-slate-500 hover:text-slate-800">
+                ⚙️ Configurations<span class="hidden sm:inline"> (Sports/Genres)</span>
             </button>
         </div>
 
         <!-- CONTENU DES ONGLETS -->
         <div class="space-y-8">
-            
+
             <!-- ONGLET 1: FORMULAIRE DE SAISIE (ACTIF PAR DÉFAUT) -->
-            <div id="admin-tab-form" class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-sm max-w-4xl mx-auto">
+            <div id="admin-tab-form"
+                class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-sm max-w-4xl mx-auto">
                 <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                     🏅 Nouveau Résultat d'Athlète
                 </h3>
@@ -218,14 +273,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Date de l'événement -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Date</label>
-                            <input type="date" id="form-date" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Date</label>
+                            <input type="date" id="form-date" required
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <!-- Niveau de la Médaille -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Médaille</label>
-                            <select id="form-medal" class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Médaille</label>
+                            <select id="form-medal"
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
                                 <option value="Or">🥇 Or</option>
                                 <option value="Argent">🥈 Argent</option>
                                 <option value="Bronze">🥉 Bronze</option>
@@ -234,84 +293,118 @@
 
                         <!-- Sport (Dynamique) -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sport</label>
-                            <select id="form-sport" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sport</label>
+                            <select id="form-sport" required
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
                                 <!-- Options chargées -->
                             </select>
                         </div>
 
                         <!-- Sexe / Genre (Dynamique) -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sexe / Genre</label>
-                            <select id="form-gender" required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sexe
+                                / Genre</label>
+                            <select id="form-gender" required
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
                                 <!-- Options chargées -->
                             </select>
                         </div>
 
                         <!-- Catégorie -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Catégorie</label>
-                            <input type="text" id="form-category" placeholder="Ex: Simple, Double, Tournoi A..." required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Catégorie</label>
+                            <input type="text" id="form-category" placeholder="Ex: Simple, Double, Tournoi A..."
+                                required
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <!-- Sous-Catégorie -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sous-Catégorie</label>
-                            <input type="text" id="form-subcategory" placeholder="Ex: Elite, Division B, 100m Papillon..." required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sous-Catégorie</label>
+                            <input type="text" id="form-subcategory"
+                                placeholder="Ex: Elite, Division B, 100m Papillon..." required
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <!-- Groupe d'âge -->
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Groupe d'âge</label>
-                            <input type="text" id="form-age-group" placeholder="Ex: Tous âges, 18-29, 30+, 40-49..." required class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Groupe
+                                d'âge</label>
+                            <input type="text" id="form-age-group" placeholder="Ex: Tous âges, 18-29, 30+, 40-49..."
+                                required
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <!-- Type de sport (Individuel vs Équipe) -->
-                        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100 flex gap-6 items-center">
-                            <span class="text-sm font-semibold text-slate-600">Type d'engagement :</span>
-                            <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="form-sport-type" value="individual" checked onchange="toggleFormSportType()" class="text-indigo-600 focus:ring-indigo-500">
-                                <span class="text-sm text-slate-700 font-medium">Individuel</span>
-                            </label>
-                            <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="form-sport-type" value="team" onchange="toggleFormSportType()" class="text-indigo-600 focus:ring-indigo-500">
-                                <span class="text-sm text-slate-700 font-medium">Équipe / Collectif</span>
-                            </label>
+                        <div
+                            class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100 flex gap-6 items-center">
+                            <span class="text-sm font-semibold text-slate-600">Type&nbsp;:</span>
+                            <div>
+                                <label class="inline-flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="form-sport-type" value="individual" checked
+                                        onchange="toggleFormSportType()" class="text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-slate-700 font-medium">Individuel</span>
+                                </label>
+                                <label class="inline-flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="form-sport-type" value="team"
+                                        onchange="toggleFormSportType()" class="text-indigo-600 focus:ring-indigo-500">
+                                    <span class="text-sm text-slate-700 font-medium">Équipe / Collectif</span>
+                                </label>
+                            </div>
+
                         </div>
 
                         <!-- CHAMPS CONDITIONNELS (INDIVIDUEL) -->
                         <div id="wrapper-individual" class="md:col-span-2">
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom Complet de l'Athlète</label>
-                            <input type="text" id="form-athlete-name" placeholder="Ex: Sarah Tremblay" class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom
+                                Complet de l'Athlète</label>
+                            <input type="text" id="form-athlete-name" placeholder="Ex: Sarah Tremblay"
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <!-- CHAMPS CONDITIONNELS (ÉQUIPE) -->
                         <div id="wrapper-team" class="hidden md:col-span-2 space-y-4">
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom de l'Équipe</label>
-                                <input type="text" id="form-team-name" placeholder="Ex: Montréal Impact Spike" class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <label
+                                    class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom
+                                    de l'Équipe</label>
+                                <input type="text" id="form-team-name" placeholder="Ex: Montréal Impact Spike"
+                                    class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Membres de l'Équipe (Séparés par des virgules)</label>
-                                <textarea id="form-team-members" rows="2" placeholder="Ex: Alice Smith, Bob Lemieux, Marc Dupuis..." class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                                <label
+                                    class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Membres
+                                    de l'Équipe (Séparés par des virgules)</label>
+                                <textarea id="form-team-members" rows="2"
+                                    placeholder="Ex: Alice Smith, Bob Lemieux, Marc Dupuis..."
+                                    class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
                             </div>
                         </div>
 
                         <!-- Ajout de la Photo -->
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Photo de l'Athlète / de l'Équipe</label>
-                            <input type="file" id="form-photo" accept="image/*" required class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 file:cursor-pointer">
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Photo
+                                de l'Athlète / de l'Équipe</label>
+                            <input type="file" id="form-photo" accept="image/*" required
+                                class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 file:cursor-pointer">
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/20 flex justify-center items-center gap-2">
+                    <button type="submit"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/20 flex justify-center items-center gap-2">
                         <span>💾</span> Enregistrer le résultat
                     </button>
                 </form>
             </div>
 
             <!-- ONGLET 2: TABLEAU DES RÉSULTATS -->
-            <div id="admin-tab-results" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div id="admin-tab-results"
+                class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <div class="p-6 border-b border-slate-100">
                     <h4 class="text-lg font-bold text-slate-900">Résultats Enregistrés</h4>
                 </div>
@@ -319,11 +412,16 @@
                     <table class="min-w-full divide-y divide-slate-100 text-sm">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Lauréat / Épreuve</th>
-                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Catégories</th>
-                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">Médaille</th>
-                                <th class="px-6 py-4 text-right font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">
+                                    Lauréat / Épreuve</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">
+                                    Date</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">
+                                    Catégories</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-500 uppercase tracking-wider">
+                                    Médaille</th>
+                                <th class="px-6 py-4 text-right font-semibold text-slate-500 uppercase tracking-wider">
+                                    Actions</th>
                             </tr>
                         </thead>
                         <tbody id="admin-table-body" class="bg-white divide-y divide-slate-50">
@@ -342,10 +440,13 @@
                     </h3>
                     <div class="space-y-3">
                         <div class="flex gap-2">
-                            <input type="text" id="new-sport-name" placeholder="Nouveau sport" class="flex-grow p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="addNewSport()" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Ajouter</button>
+                            <input type="text" id="new-sport-name" placeholder="Nouveau sport"
+                                class="flex-grow p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="addNewSport()"
+                                class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Ajouter</button>
                         </div>
-                        <ul id="admin-sports-list" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 border-t border-slate-50 pt-2 text-sm">
+                        <ul id="admin-sports-list"
+                            class="space-y-1.5 max-h-60 overflow-y-auto pr-1 border-t border-slate-50 pt-2 text-sm">
                             <!-- Rempli par JS -->
                         </ul>
                     </div>
@@ -358,10 +459,13 @@
                     </h3>
                     <div class="space-y-3">
                         <div class="flex gap-2">
-                            <input type="text" id="new-gender-name" placeholder="Nouveau genre/catégorie" class="flex-grow p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="addNewGender()" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Ajouter</button>
+                            <input type="text" id="new-gender-name" placeholder="Nouveau genre/catégorie"
+                                class="flex-grow p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="addNewGender()"
+                                class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Ajouter</button>
                         </div>
-                        <ul id="admin-genders-list" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 border-t border-slate-50 pt-2 text-sm">
+                        <ul id="admin-genders-list"
+                            class="space-y-1.5 max-h-60 overflow-y-auto pr-1 border-t border-slate-50 pt-2 text-sm">
                             <!-- Rempli par JS -->
                         </ul>
                     </div>
@@ -373,50 +477,148 @@
 
     <!-- COMPOSANTS DIALOGUES MODULAIRES PERSO (ZÉRO ALERT/CONFIRM NATIF) -->
     <!-- Boîte de dialogue de Confirmation Personnalisée -->
-    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4">
+    <div id="custom-confirm-modal"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4">
         <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full border border-slate-100">
             <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 ⚠️ Attention
             </h3>
             <p id="custom-confirm-message" class="text-slate-600 mt-2 text-sm"></p>
             <div class="flex justify-end gap-3 mt-6">
-                <button id="custom-confirm-cancel" class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Annuler</button>
-                <button id="custom-confirm-ok" class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition">Confirmer</button>
+                <button id="custom-confirm-cancel"
+                    class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Annuler</button>
+                <button id="custom-confirm-ok"
+                    class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition">Confirmer</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification (Succès, Alerte, Infos) -->
-    <div id="custom-toast" class="fixed bottom-5 right-5 z-[100] flex items-center gap-3 bg-slate-900 text-white px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 max-w-sm">
+    <div id="custom-toast"
+        class="fixed bottom-5 right-5 z-[100] flex items-center gap-3 bg-slate-900 text-white px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 max-w-sm">
         <span id="custom-toast-icon">✨</span>
         <span id="custom-toast-message" class="text-sm font-semibold"></span>
+    </div>
+
+    <!-- Modal d'édition d'un résultat -->
+    <div id="edit-medal-modal"
+        class="hidden fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/60 backdrop-blur-sm px-4 py-8 overflow-y-auto">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900 mb-5 flex items-center gap-2">✏️ Modifier le résultat</h3>
+            <form id="edit-medal-form" class="space-y-4">
+                <input type="hidden" id="edit-medal-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label
+                            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Date</label>
+                        <input type="date" id="edit-form-date" required
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Médaille</label>
+                        <select id="edit-form-medal"
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                            <option value="Or">🥇 Or</option>
+                            <option value="Argent">🥈 Argent</option>
+                            <option value="Bronze">🥉 Bronze</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sport</label>
+                        <select id="edit-form-sport"
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sexe /
+                            Genre</label>
+                        <select id="edit-form-gender"
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"></select>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Catégorie</label>
+                        <input type="text" id="edit-form-category" required
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Sous-Catégorie</label>
+                        <input type="text" id="edit-form-subcategory" required
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Groupe
+                            d'âge</label>
+                        <input type="text" id="edit-form-age-group" required
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div id="edit-wrapper-individual" class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom
+                            Complet de l'Athlète</label>
+                        <input type="text" id="edit-form-athlete-name"
+                            class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div id="edit-wrapper-team" class="hidden md:col-span-2 space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nom
+                                de l'Équipe</label>
+                            <input type="text" id="edit-form-team-name"
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Membres
+                                de l'Équipe</label>
+                            <textarea id="edit-form-team-members" rows="2"
+                                class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nouvelle
+                            Photo (optionnel)</label>
+                        <input type="file" id="edit-form-photo" accept="image/*"
+                            class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 file:cursor-pointer">
+                        <p class="text-xs text-slate-400 mt-1">Laissez vide pour conserver la photo actuelle.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3 justify-end pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeEditModal()"
+                        class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Annuler</button>
+                    <button type="submit"
+                        class="px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition flex items-center gap-2"><span>💾</span>
+                        Enregistrer</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- SDK Firebase et Script Applicatif Principal -->
     <script type="module">
         // Import des bibliothèques Firebase officielles via CDN
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            doc, 
-            addDoc, 
+        import {
+            getFirestore,
+            collection,
+            doc,
+            addDoc,
             setDoc,
             getDocs,
-            deleteDoc, 
-            onSnapshot 
+            deleteDoc,
+            onSnapshot
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { 
-            getAuth, 
-            signInWithCustomToken, 
-            signInAnonymously, 
-            onAuthStateChanged 
+        import {
+            getAuth,
+            signInWithCustomToken,
+            signInAnonymously,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getStorage, 
-            ref, 
-            uploadBytes, 
-            getDownloadURL 
+        import {
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // --- EXPOSITION EXPLICITE ET IMMÉDIATE DES FONCTIONS AU CONTEXTE WINDOW ---
@@ -438,7 +640,7 @@
 
         // --- CONFIGURATION DE LA BASE DE DONNÉES ET INITIALISATION ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'gg2026-mtl';
-        
+
         let firebaseConfig;
         if (typeof __firebase_config !== 'undefined' && __firebase_config) {
             firebaseConfig = JSON.parse(__firebase_config);
@@ -479,8 +681,8 @@
                 db = getFirestore(app);
                 try {
                     storage = getStorage(app);
-                } catch(e) { 
-                    console.warn("Firebase Storage non accessible."); 
+                } catch (e) {
+                    console.warn("Firebase Storage non accessible.");
                 }
 
                 // Références de collections strictes
@@ -489,10 +691,6 @@
                 gendersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'genders');
 
                 useFirebase = true;
-                
-                // Mettre à jour l'indicateur visuel d'administration
-                document.getElementById('db-status-badge').className = "px-3 py-1 text-xs rounded-full font-bold bg-green-100 text-green-700 border border-green-200";
-                document.getElementById('db-status-badge').textContent = "Connecté au Cloud (Firebase)";
 
             } catch (err) {
                 console.error("Échec d'initialisation du SDK Firebase. Repli automatique en Mode Local Démo.", err);
@@ -506,13 +704,6 @@
         // --- MODE DE REPLI LOCALSTORAGE ---
         function fallbackToLocalStorageMode() {
             useFirebase = false;
-
-            // Mettre à jour l'indicateur visuel d'administration
-            const badge = document.getElementById('db-status-badge');
-            if (badge) {
-                badge.className = "px-3 py-1 text-xs rounded-full font-bold bg-amber-100 text-amber-700 border border-amber-200";
-                badge.textContent = "Mode Local Démo (localStorage)";
-            }
 
             // Chargement depuis localStorage
             medalsData = JSON.parse(localStorage.getItem('gg2026_medals_local')) || [];
@@ -581,7 +772,7 @@
                     const userCredential = await signInAnonymously(auth);
                     currentUser = userCredential.user;
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error("Erreur d'authentification Firebase :", e);
                 fallbackToLocalStorageMode();
             }
@@ -611,7 +802,7 @@
             // 1. Écouter les Médailles
             onSnapshot(medaillesCollectionRef, (snapshot) => {
                 medalsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
+
                 if (medalsData.length === 0) {
                     seedDefaultMedals();
                 } else {
@@ -773,7 +964,7 @@
         async function deleteMedal(id) {
             const medalObj = medalsData.find(item => item.id === id);
             const medalName = medalObj ? (medalObj.isTeam ? medalObj.teamName : medalObj.athleteName) : "ce résultat";
-            
+
             requestConfirm(`Êtes-vous sûr de vouloir retirer "${medalName}" du tableau d'honneur ?`, async () => {
                 if (useFirebase) {
                     if (!currentUser) return;
@@ -789,12 +980,12 @@
         }
 
         // --- ENREGISTREMENT DU FORMULAIRE ET COMPRESSION PHOTO ---
-        document.getElementById('add-medal-form').addEventListener('submit', async function(e) {
+        document.getElementById('add-medal-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const fileInput = document.getElementById('form-photo');
             const file = fileInput.files[0];
-            
+
             if (!file) {
                 showToast("Veuillez sélectionner une photo pour l'athlète ou l'équipe.", "⚠️");
                 return;
@@ -814,7 +1005,7 @@
                         const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}_${file.name}`);
                         const snapshot = await uploadBytes(storageRef, file);
                         photoUrl = await getDownloadURL(snapshot.ref);
-                    } catch(storageErr) {
+                    } catch (storageErr) {
                         console.warn("Storage upload failed, falling back to base64 inline encoding", storageErr);
                     }
                 }
@@ -854,15 +1045,15 @@
                     renderAdminTable();
                     renderPublicList();
                 }
-                
+
                 // Réinitialiser le formulaire
                 document.getElementById('add-medal-form').reset();
                 toggleFormSportType();
-                
+
                 showToast("Félicitations ! Le résultat a été enregistré avec succès.", "🏆");
                 switchAdminTab('results');
 
-            } catch(err) {
+            } catch (err) {
                 console.error("Enregistrement échoué:", err);
                 showToast("Erreur lors de l'enregistrement.", "❌");
             }
@@ -873,7 +1064,7 @@
             const toast = document.getElementById('custom-toast');
             document.getElementById('custom-toast-icon').textContent = icon;
             document.getElementById('custom-toast-message').textContent = message;
-            
+
             toast.classList.remove('translate-y-20', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
 
@@ -939,7 +1130,7 @@
         // --- GESTION DES LISTES DYNAMIQUES D'ADMINISTRATION ---
         function renderSettingsLists() {
             const sportsContainer = document.getElementById('admin-sports-list');
-            if(sportsContainer) {
+            if (sportsContainer) {
                 sportsContainer.innerHTML = '';
                 sportsList.forEach((sport, index) => {
                     const li = document.createElement('li');
@@ -953,7 +1144,7 @@
             }
 
             const gendersContainer = document.getElementById('admin-genders-list');
-            if(gendersContainer) {
+            if (gendersContainer) {
                 gendersContainer.innerHTML = '';
                 gendersList.forEach((gender, index) => {
                     const li = document.createElement('li');
@@ -972,7 +1163,7 @@
         function updateFormDropdowns() {
             const sportSelect = document.getElementById('form-sport');
             const genderSelect = document.getElementById('form-gender');
-            if(!sportSelect || !genderSelect) return;
+            if (!sportSelect || !genderSelect) return;
 
             const selectedSport = sportSelect.value;
             const selectedGender = genderSelect.value;
@@ -1032,7 +1223,7 @@
         function getMedalBadgeMarkup(medal) {
             if (medal === "Or") return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1 shadow-sm">🥇 OR</span>`;
             if (medal === "Argent") return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-1 shadow-sm">🥈 ARGENT</span>`;
-            return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-900/5 text-amber-800 border border-amber-900/10 flex items-center gap-1 shadow-sm">🥉 BRONZE</span>`;
+            return `<span class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-900/10 flex items-center gap-1 shadow-sm">🥉 BRONZE</span>`;
         }
 
         function getMedalTvGradient(medal) {
@@ -1071,7 +1262,7 @@
                 btn.classList.remove('bg-slate-900', 'text-white');
                 btn.classList.add('bg-white', 'hover:bg-slate-100', 'text-slate-700', 'border', 'border-slate-200');
             });
-            
+
             const activeBtn = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.textContent.includes(filter) || (filter === 'Tous' && btn.textContent === 'Tous'));
             if (activeBtn) {
                 activeBtn.classList.add('bg-slate-900', 'text-white');
@@ -1081,7 +1272,7 @@
         }
 
         function formatDateToFrench(dateStr) {
-            if(!dateStr) return '';
+            if (!dateStr) return '';
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateStr).toLocaleDateString('fr-FR', options);
         }
@@ -1089,7 +1280,7 @@
         // --- RENDU VUE 1 : GRILLE PUBLIQUE ---
         function renderPublicList() {
             const grid = document.getElementById('medals-grid');
-            if(!grid) return;
+            if (!grid) return;
             grid.innerHTML = '';
 
             let filtered = medalsData;
@@ -1121,13 +1312,13 @@
                 const isTeam = item.isTeam === true;
                 const displayName = isTeam ? item.teamName : item.athleteName;
                 const typeIcon = isTeam ? '👥 Équipe' : '👤 Individuel';
-                
+
                 let membersSection = '';
-                if(isTeam && item.teamMembers) {
+                if (isTeam && item.teamMembers) {
                     membersSection = `
                         <div class="mt-3 pt-2 border-t border-slate-100">
                             <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Membres :</span>
-                            <p class="text-xs text-slate-500 italic truncate" title="${item.teamMembers}">
+                            <p class="text-xs text-slate-500 italic" title="${item.teamMembers}">
                                 ${item.teamMembers}
                             </p>
                         </div>
@@ -1136,7 +1327,7 @@
 
                 const card = document.createElement('div');
                 card.className = `bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100/80 ${colorClass}`;
-                
+
                 card.innerHTML = `
                     <div class="h-56 w-full relative overflow-hidden bg-slate-900">
                         <img src="${item.photo}" alt="${displayName}" class="w-full h-full object-cover opacity-90 hover:scale-105 transition-all duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Equipe+Montreal'">
@@ -1186,12 +1377,12 @@
         function startTVMode() {
             hideAllViews();
             document.body.classList.add('tv-mode-active');
-            
+
             const tvView = document.getElementById('view-tv');
             tvView.classList.remove('hidden');
-            
+
             const container = document.getElementById('slideshow-container');
-            if(!container) return;
+            if (!container) return;
             container.innerHTML = '';
 
             if (medalsData.length === 0) {
@@ -1222,12 +1413,16 @@
                 }
 
                 const slide = document.createElement('div');
-                slide.className = `slide absolute inset-0 w-full h-full flex flex-col lg:flex-row items-stretch justify-between ${index === 0 ? 'active' : ''}`;
-                
+                slide.className = `slide absolute inset-0 w-full h-full ${index === 0 ? 'active' : ''}`;
+
                 slide.innerHTML = `
-                    <!-- Partie Gauche : Informations textuelles -->
-                    <div class="w-full lg:w-[45%] p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#070b12] text-white z-20 space-y-4 lg:space-y-6 flex-shrink-0">
-                        
+                    <!-- Photo plein écran en arrière-plan -->
+                    <img src="${item.photo}" class="absolute inset-0 w-full h-full object-cover object-center" style="transform: scale(1.05); transition: transform 7500ms ease-out;" onerror="this.src='https://placehold.co/1200x800/0f172a/94a3b8?text=Equipe+Montreal'">
+                    <!-- Masque dégradé Netflix (de gauche/sombre vers droite/transparent) -->
+                    <div class="absolute inset-0 tv-photo-mask z-10 pointer-events-none"></div>
+                    <!-- Contenu textuel en superposition à gauche -->
+                    <div class="absolute inset-y-0 left-0 z-20 flex flex-col justify-center p-8 sm:p-12 lg:p-16 text-white space-y-4 lg:space-y-6 overflow-y-auto" style="width: min(100%, 660px)">
+
                         <!-- Médaille & Date -->
                         <div class="flex items-center gap-3">
                             <span class="text-4xl md:text-5xl lg:text-6xl filter drop-shadow">
@@ -1247,10 +1442,10 @@
                         </h1>
 
                         <!-- Tableau de spécifications sportives -->
-                        <div class="grid grid-cols-2 gap-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800/30 backdrop-blur-sm">
+                        <div class="grid grid-cols-2 gap-4 bg-slate-950/60 p-5 rounded-2xl border border-slate-800/30 backdrop-blur-sm">
                             <div>
                                 <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider block mb-0.5">Discipline</span>
-                                <span class="text-base sm:text-lg font-bold text-slate-100">${item.sport}</span>
+                                <span class="text-base sm:text-3xl font-bold text-slate-100">${item.sport}</span>
                             </div>
                             <div>
                                 <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider block mb-0.5">Genre / Division</span>
@@ -1271,13 +1466,6 @@
                         <!-- Équipe et liste des membres -->
                         ${teamHtml}
                     </div>
-
-                    <!-- Partie Droite : La photo en arrière-plan avec effet fusion de Netflix -->
-                    <div class="relative flex-grow h-[45vh] lg:h-full overflow-hidden bg-slate-950">
-                        <img src="${item.photo}" class="w-full h-full object-cover object-center scale-100 lg:scale-105 transition-transform duration-[7500ms]" onerror="this.src='https://placehold.co/1200x800/0f172a/94a3b8?text=Equipe+Montreal'">
-                        <!-- Masque transparent dégradé progressif pour l'effet Netflix -->
-                        <div class="absolute inset-0 tv-photo-mask z-10 pointer-events-none"></div>
-                    </div>
                 `;
                 container.appendChild(slide);
             });
@@ -1290,7 +1478,7 @@
         function nextSlide() {
             const slides = document.querySelectorAll('.slide');
             if (slides.length === 0) return;
-            
+
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
@@ -1300,12 +1488,12 @@
 
         function resetSlideProgressBar() {
             const bar = document.getElementById('slide-progress');
-            if(!bar) return;
+            if (!bar) return;
             bar.style.transition = 'none';
             bar.style.width = '0%';
-            
-            bar.offsetHeight; 
-            
+
+            bar.offsetHeight;
+
             bar.style.transition = `width ${SLIDE_DURATION}ms linear`;
             bar.style.width = '100%';
         }
@@ -1342,9 +1530,119 @@
         }
 
         // --- RENDU TABLEAU ADMIN ---
+        // --- ÉDITION D'UN RÉSULTAT ---
+        function openEditModal(id) {
+            const item = medalsData.find(m => m.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-medal-id').value = id;
+            document.getElementById('edit-form-date').value = item.date || '';
+            document.getElementById('edit-form-medal').value = item.medal || 'Or';
+            document.getElementById('edit-form-category').value = item.category || '';
+            document.getElementById('edit-form-subcategory').value = item.subcategory || '';
+            document.getElementById('edit-form-age-group').value = item.ageGroup || '';
+
+            const editSportSel = document.getElementById('edit-form-sport');
+            const editGenderSel = document.getElementById('edit-form-gender');
+            editSportSel.innerHTML = '';
+            sportsList.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; editSportSel.appendChild(o); });
+            if (sportsList.includes(item.sport)) editSportSel.value = item.sport;
+            editGenderSel.innerHTML = '';
+            gendersList.forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = g; editGenderSel.appendChild(o); });
+            if (gendersList.includes(item.gender)) editGenderSel.value = item.gender;
+
+            const isTeam = item.isTeam === true;
+            if (isTeam) {
+                document.getElementById('edit-wrapper-individual').classList.add('hidden');
+                document.getElementById('edit-wrapper-team').classList.remove('hidden');
+                document.getElementById('edit-form-team-name').value = item.teamName || '';
+                document.getElementById('edit-form-team-members').value = item.teamMembers || '';
+            } else {
+                document.getElementById('edit-wrapper-individual').classList.remove('hidden');
+                document.getElementById('edit-wrapper-team').classList.add('hidden');
+                document.getElementById('edit-form-athlete-name').value = item.athleteName || '';
+            }
+
+            document.getElementById('edit-form-photo').value = '';
+            document.getElementById('edit-medal-modal').classList.remove('hidden');
+        }
+        window.openEditModal = openEditModal;
+
+        function closeEditModal() {
+            document.getElementById('edit-medal-modal').classList.add('hidden');
+        }
+        window.closeEditModal = closeEditModal;
+
+        document.getElementById('edit-medal-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-medal-id').value;
+            const item = medalsData.find(m => m.id === id);
+            if (!item) return;
+
+            showToast("Mise à jour en cours...", "🔄");
+
+            try {
+                let photoUrl = item.photo;
+                const fileInput = document.getElementById('edit-form-photo');
+                const file = fileInput.files[0];
+
+                if (file) {
+                    let uploaded = false;
+                    if (useFirebase && storage) {
+                        try {
+                            const storageRef = ref(storage, `artifacts/${appId}/photos/${Date.now()}_${file.name}`);
+                            const snapshot = await uploadBytes(storageRef, file);
+                            photoUrl = await getDownloadURL(snapshot.ref);
+                            uploaded = true;
+                        } catch (storageErr) { console.warn("Storage upload failed, using base64", storageErr); }
+                    }
+                    if (!uploaded) {
+                        photoUrl = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = ev => resolve(ev.target.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                    }
+                }
+
+                const isTeam = item.isTeam === true;
+                const updated = {
+                    ...item,
+                    date: document.getElementById('edit-form-date').value,
+                    medal: document.getElementById('edit-form-medal').value,
+                    sport: document.getElementById('edit-form-sport').value,
+                    gender: document.getElementById('edit-form-gender').value,
+                    category: document.getElementById('edit-form-category').value,
+                    subcategory: document.getElementById('edit-form-subcategory').value,
+                    ageGroup: document.getElementById('edit-form-age-group').value,
+                    athleteName: isTeam ? (item.athleteName || '') : document.getElementById('edit-form-athlete-name').value,
+                    teamName: isTeam ? document.getElementById('edit-form-team-name').value : (item.teamName || ''),
+                    teamMembers: isTeam ? document.getElementById('edit-form-team-members').value : (item.teamMembers || ''),
+                    photo: photoUrl,
+                };
+
+                if (useFirebase) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'medailles', id), updated);
+                } else {
+                    const idx = medalsData.findIndex(m => m.id === id);
+                    if (idx !== -1) medalsData[idx] = updated;
+                    saveLocalData();
+                    renderAdminTable();
+                    renderPublicList();
+                }
+
+                closeEditModal();
+                showToast("Résultat mis à jour avec succès.", "✅");
+            } catch (err) {
+                console.error("Mise à jour échouée:", err);
+                showToast("Erreur lors de la mise à jour.", "❌");
+            }
+        });
+
         function renderAdminTable() {
             const tbody = document.getElementById('admin-table-body');
-            if(!tbody) return;
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             if (medalsData.length === 0) {
@@ -1360,7 +1658,7 @@
 
             medalsData.forEach(item => {
                 const displayName = item.isTeam === true ? `👥 ${item.teamName}` : `👤 ${item.athleteName}`;
-                
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
@@ -1386,13 +1684,19 @@
                         ${getMedalBadgeMarkup(item.medal)}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold">
+                        <button class="edit-medal-btn text-indigo-600 hover:text-indigo-950 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition mr-2">
+                            Éditer
+                        </button>
                         <button class="delete-medal-btn text-red-600 hover:text-red-950 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
                             Supprimer
                         </button>
                     </td>
                 `;
 
-                // Attacher le clic
+                // Attacher les clics
+                tr.querySelector('.edit-medal-btn').addEventListener('click', () => {
+                    openEditModal(item.id);
+                });
                 tr.querySelector('.delete-medal-btn').addEventListener('click', () => {
                     deleteMedal(item.id);
                 });
@@ -1406,4 +1710,5 @@
 
     </script>
 </body>
+
 </html>
